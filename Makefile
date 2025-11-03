@@ -27,7 +27,7 @@ OBJ_BONUS_DIR = obj_bonus
 # Compiler and flags
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I $(INCLUDE_DIR)
-LDFLAGS := -L $(LIBFT_DIR#include <stdio.h>) -L $(MLX_DIR)
+LDFLAGS := -L $(LIBFT_DIR) -L $(MLX_DIR)
 LDLIBS  := -lft -lmlx -lXext -lX11 -lm -lz
 AR = ar rcs
 RM = rm -rf
@@ -58,15 +58,9 @@ OBJS_SHARED = $(addprefix $(OBJ_BONUS_DIR)/, $(SRC_SHARED:.c=.o))
 # Libraries
 LIBFT = $(LIBFT_DIR)/libft.a
 
-ifeq ($(strip $(SRC)),)
-all: $(LIBFT)
-	@printf '%b\n' "$(YELLOW)No source files in $(SRC_DIR) (SRC is empty). Add .c files to SRC in Makefile to build $(NAME).$(RESET)"
-else
-all: $(NAME)
-endif
 
 $(NAME): $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(LDFLAGS) $(LDLIBS) -o $(NAME)
 	@$(MAKE) banner
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c

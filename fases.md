@@ -9,30 +9,30 @@
 ### ✅ Checklist do Dia 1 (5h)
 
 #### 🔧 Bloco 1 (50 min)
-- [ ] Criar repositório Git
-- [ ] Adicionar `.gitignore`
-- [ ] Criar estrutura: `src/`, `include/`, `assets/`, `maps/`, `libs/libft/`
-- [ ] Escrever README mínimo
+- [x] Criar repositório Git
+- [x] Adicionar `.gitignore`
+- [x] Criar estrutura: `src/`, `include/`, `assets/`, `maps/`, `libs/libft/`
+- [x] Escrever README mínimo
 - **🎯 Meta:** Repo inicial criado
 - **⏸️ PAUSA 10 min** → 💾 `git commit -m "init: project structure"`
 
 #### 🔧 Bloco 2 (50 min)
-- [ ] Instalar/colocar MinilibX no projeto
-- [ ] Adicionar ao Makefile: `NAME`, `all`, `clean`, `fclean`, `re`
-- [ ] Testar compilação (sem relink desnecessário)
+- [x] Instalar/colocar MinilibX no projeto
+- [x] Adicionar ao Makefile: `NAME`, `all`, `clean`, `fclean`, `re`
+- [x] Testar compilação (sem relink desnecessário)
 - **🎯 Meta:** Makefile compila sem erros
 - **⏸️ PAUSA 10 min** → 💾 `git commit -m "build: add minilibx to Makefile"`
 
 #### 🔧 Bloco 3 (50 min)
-- [ ] Copiar/configurar libft
-- [ ] Testar flags: `-Wall -Wextra -Werror`
-- [ ] Garantir que `make` cria binário
+- [x] Copiar/configurar libft
+- [x] Testar flags: `-Wall -Wextra -Werror`
+- [x] Garantir que `make` cria binário
 - **🎯 Meta:** Binário criado (mesmo vazio)
 - **⏸️ PAUSA 10 min** → 💾 `git commit -m "chore: libft scaffold"`
 
 #### 🔧 Bloco 4 (50 min)
-- [ ] Script de teste básico: `./so_long maps/test.ber`
-- [ ] Deve mostrar erro amigável se mapa inválido
+- [x] Script de teste básico: `./so_long maps/test.ber`
+- [x] Deve mostrar erro amigável se mapa inválido
 - [ ] Atualizar README com passos de compilação
 - **🎯 Meta:** Teste básico funcionando
 - **⏸️ PAUSA 10 min** → 💾 `git commit -m "test: basic run checks"`
