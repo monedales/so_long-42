@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/10/31 18:04:13 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:11:36 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,9 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <unistd.h>
+# include <stdio.h>
+# include "../libs/libft/libft.h"
+# include "../libs/minilibix-linux/mlx.h"
+# include "../libs/minilibix-linux/mlx_int.h"
 
 #endif
