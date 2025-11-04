@@ -24,25 +24,31 @@ MLX_DIR = libs/minilibix-linux
 OBJ_DIR = obj
 OBJ_BONUS_DIR = obj_bonus
 
-# Compiler and flags
+# Compiler and base flags
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I $(INCLUDE_DIR)
-LDFLAGS := -L $(LIBFT_DIR) -L $(MLX_DIR)
-LDLIBS  := -lft -lmlx -lXext -lX11 -lm -lz
+CFLAGS = -Wall -Wextra -Werror -Wno-deprecated-non-prototype -std=c17 -I $(INCLUDE_DIR) -I $(MLX_DIR)
 AR = ar rcs
 RM = rm -rf
 
-# Source files
-SRC := mlx_test.c \
+# Detect system (macOS or Linux)
+UNAME_S := $(shell uname -s)
 
-
-# Detect empty SRC to avoid linking when no sources are present
-ifeq ($(strip $(SRC)),)
-SRC_EMPTY := 1
+ifeq ($(UNAME_S), Darwin)
+	# macOS config - Using XQuartz (X11)
+	X11_PATH = /opt/X11
+	CFLAGS += -I $(X11_PATH)/include
+	LDFLAGS := -L $(LIBFT_DIR) -L $(MLX_DIR) -L $(X11_PATH)/lib
+	LDLIBS  := -lft -lmlx -lXext -lX11 -lm -lz
+else ifeq ($(UNAME_S), Linux)
+	# Linux config
+	LDFLAGS := -L $(LIBFT_DIR) -L $(MLX_DIR)
+	LDLIBS  := -lft -lmlx -lXext -lX11 -lm -lz
 else
-SRC_EMPTY := 0
+	$(error Unsupported operating system: $(UNAME_S))
 endif
 
+# Source files
+SRC := so_long.c map_read.c \
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
@@ -57,10 +63,13 @@ OBJS_SHARED = $(addprefix $(OBJ_BONUS_DIR)/, $(SRC_SHARED:.c=.o))
 
 # Libraries
 LIBFT = $(LIBFT_DIR)/libft.a
+MLX_LIB = $(MLX_DIR)/libmlx.a
 
+# Default rule
+all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(LDFLAGS) $(LDLIBS) -o $(NAME)
+$(NAME): $(LIBFT) $(MLX_LIB) $(OBJS)
+	@$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) $(LDLIBS) -o $(NAME)
 	@$(MAKE) banner
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -69,6 +78,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
+
+$(MLX_LIB):
+	@$(MAKE) -C $(MLX_DIR) --silent
 
 # Bonus target
 # bonus: $(BONUS_NAME)
@@ -116,12 +128,13 @@ test_colors:
 	@printf '%b\n' "$(LILAC_TRUE)LILAC_TRUE (24-bit truecolor)$(RESET)"
 
 clean:
-	@$(MAKE) -C $(LIBFT_DIR) clean
+	@$(MAKE) -C $(LIBFT_DIR) clean --no-print-directory
+	@$(MAKE) -C $(MLX_DIR) clean --silent
 	@$(RM) $(OBJ_DIR) $(OBJ_BONUS_DIR)
 	@echo "$(RED) $(NAME) objects removed$(RESET)"
 
 fclean: clean
-	@$(MAKE) -C $(LIBFT_DIR) fclean
+	@$(MAKE) -C $(LIBFT_DIR) fclean --no-print-directory
 	@$(RM) $(NAME) $(BONUS_NAME)
 	@echo "$(RED) $(NAME) deleted$(RESET)"
 
