@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   so_long.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 18:18:25 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/03 15:47:17 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/04 19:18:46 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,29 @@
 
 int	main(int argc, char **argv)
 {
-	int	fd;
+	char	**map;
+	int		i;
 
 	if (argc != 2)
+		return(handle_error(ERR_ARGS));
+	// if (!has_ber_extension(argv[1]))
+	// 	return (handle_error(ERR_NO_BER));
+	map = read_map(argv[1]);
+	if (!map)
+		handle_error(ERR_FILE);
+	if (!is_rectangular(map))
+		handle_error(ERR_NOT_RECTANG);
+	if (!has_only_valid_chars(map))
+		handle_error(ERR_CHARS_INVALID);
+	if (!has_closed_walls(map))
+		handle_error(ERR_NOT_WALLS);
+	if (!has_valid_counts(map))
+		handle_error(ERR_ELEM_INVALID);
+	i = 0;
+	while (map[i])
 	{
-		write(2, "Error\nusage: ./so_long <map.ber>\n", 33);
-		return (1);
+		ft_printf("%s\n", map[i]);
+		i++;
 	}
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0)
-	{
-		perror("Error opening map");
-		return (1);
-	}
-	write(1, "Map loaded successfully (test only)\n", 36);
-	close(fd);
 	return (0);
 }
