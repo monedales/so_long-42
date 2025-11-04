@@ -48,7 +48,7 @@ else
 endif
 
 # Source files
-SRC := so_long.c map_read.c \
+SRC := so_long.c map_read.c utils.c error_handler.c
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
