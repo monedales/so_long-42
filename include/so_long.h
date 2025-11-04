@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/04 19:09:25 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/04 19:58:18 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ typedef enum e_error
 	ERR_NOT_RECTANG,
 	ERR_CHARS_INVALID,
 	ERR_NOT_WALLS,
-    ERR_ELEM_INVALID
+    ERR_ELEM_INVALID,
+	ERR_NO_PATH
 }   t_error;
 
 typedef struct s_point
@@ -42,11 +43,13 @@ typedef struct s_point
 }	t_point;
 
 int	handle_error(t_error error);
+int	has_ber_extension(const char *filename);
 char **read_map(const char *path);
 int	is_rectangular(char **map);
 int	has_only_valid_chars(char **map);
 int	has_closed_walls(char **map);
 char	**ft_append_line(char **map, char *line, int count);
 int	has_valid_counts(char **map);
+int	has_valid_path(char **map);
 
 #endif
