@@ -3,15 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   error_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:43:18 by mona              #+#    #+#             */
-/*   Updated: 2025/11/04 20:04:28 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/05 18:37:44 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+/**
+ * @brief Centralized error handler for the so_long game.
+ *
+ * This function manages all error messages through a static lookup table that
+ * maps error codes from the t_error enum to their corresponding error messages.
+ * All messages follow the format "Error\n<description>\n" for consistency.
+ *
+ * The function uses array indexing for O(1) lookup time and avoids repetitive
+ * if-else chains. Messages are stored as const char* for memory efficiency.
+ *
+ * @param error Error code from the t_error enum. Valid values:
+ *              - ERR_ARGS: Invalid number of command-line arguments
+ *              - ERR_FILE: File cannot be opened or read
+ *              - ERR_NOBER: File lacks .ber extension
+ *              - ERR_NOT_RECTANG: Map is not rectangular
+ *              - ERR_CHARS_INVALID: Map contains invalid characters
+ *              - ERR_NOT_WALLS: Map perimeter is not fully walled
+ *              - ERR_ELEM_INVALID: Invalid count of P/E/C elements
+ *              - ERR_NO_PATH: No valid path to all collectibles and exit
+ *
+ * @return Always returns 1 to indicate error status for main() exit code.
+ *
+ * @note The first element (index 0) is NULL as error codes start at 1.
+ *
+ * @see t_error enum definition in so_long.h
+ * @see main() in so_long.c for usage examples
+ */
 int	handle_error(t_error error)
 {
 	static const char	*messages[] = {
