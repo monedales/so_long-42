@@ -3,29 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   map_read.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 16:27:30 by mona              #+#    #+#             */
-/*   Updated: 2025/11/04 19:18:33 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/05 14:51:57 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-// static int	count_lines(int fd)
-// {
-// 	char	*line;
-// 	int		count;
+static char	*trim_newline(char *line)
+{
+	size_t	len;
 
-// 	count = 0;
-// 	while ((line = get_next_line(fd)))
-// 	{
-// 		count++;
-// 		free(line);
-// 	}
-// 	return (count);
-// }
+	len = ft_strlen(line);
+	if (len > 0 && line[len - 1] == '\n')
+		line[len - 1] = '\0';
+	return (line);
+}
 
+static char	**handle_read_error(char *line, int fd)
+{
+	free(line);
+	close(fd);
+	return (NULL);
+}
 
 char	**read_map(const char *path)
 {
@@ -36,27 +38,19 @@ char	**read_map(const char *path)
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
-	{
-		perror("Error opening map");
 		return (NULL);
-	}
 	map = NULL;
 	count = 0;
-	while ((line = get_next_line(fd)))
+	line = get_next_line(fd);
+	while (line)
 	{
-		size_t len = ft_strlen(line);
-		if (len > 0 && line[len - 1] == '\n')
-			line[len - 1] = '\0';
-
+		trim_newline(line);
 		map = ft_append_line(map, line, count);
 		if (!map)
-		{
-			free(line);
-			close(fd);
-			return (NULL);
-		}
+			return (handle_read_error(line, fd));
 		count++;
 		free(line);
+		line = get_next_line(fd);
 	}
 	close(fd);
 	return (map);
@@ -82,8 +76,8 @@ int	is_rectangular(char **map)
 
 int	has_only_valid_chars(char **map)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	char	c;
 
 	i = 0;
@@ -94,7 +88,7 @@ int	has_only_valid_chars(char **map)
 		{
 			c = map[i][j];
 			if (c == '\n')
-				break;
+				break ;
 			if (c != '0' && c != '1' && c != 'C' && c != 'E' && c != 'P')
 				return (0);
 			j++;
@@ -103,35 +97,3 @@ int	has_only_valid_chars(char **map)
 	}
 	return (1);
 }
-int	has_closed_walls(char **map)
-{
-	int	i;
-	int	j;
-	int	width;
-	int	height;
-
-	if (!map || !map[0])
-		return (0);
-	height = 0;
-	while (map[height])
-		height++;
-	width = ft_strlen(map[0]);
-	// validar primeira e última linha (todas devem ser '1')
-	j = 0;
-	while (j < width)
-	{
-		if (map[0][j] != '1' || map[height - 1][j] != '1')
-			return (0);
-		j++;
-	}
-	// validar colunas laterais (primeira e última coluna)
-	i = 1;
-	while (i < height - 1)
-	{
-		if (map[i][0] != '1' || map[i][width - 1] != '1')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-

@@ -24,20 +24,20 @@ int	handle_close(void *mlx)
 
 int main(void)
 {
-    void    *mlx;
-    void    *win;
+	void	*mlx;
+	void	*win;
 
 	printf("Initializing MLX...\n");
-    mlx = mlx_init();
-    if (!mlx)
+	mlx = mlx_init();
+	if (!mlx)
 	{
 		printf("Error: Failed to initialize MLX\n");
-        return (1);
+		return (1);
 	}
 	printf("MLX initialized successfully!\n");
 
 	printf("Creating window...\n");
-    win = mlx_new_window(mlx, 800, 600, "Hello, Louis!");
+	win = mlx_new_window(mlx, 800, 600, "Hello, Louis!");
 	if (!win)
 	{
 		printf("Error: Failed to create window\n");

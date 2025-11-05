@@ -3,22 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 18:18:25 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/04 20:01:01 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/05 14:51:57 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+static void	print_map(char **map)
+{
+	int	i;
+
+	i = 0;
+	while (map[i])
+	{
+		ft_printf("%s\n", map[i]);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	char	**map;
-	int		i;
 
 	if (argc != 2)
-		return(handle_error(ERR_ARGS));
+		return (handle_error(ERR_ARGS));
 	if (!has_ber_extension(argv[1]))
 		return (handle_error(ERR_NOBER));
 	map = read_map(argv[1]);
@@ -34,11 +45,6 @@ int	main(int argc, char **argv)
 		return (handle_error(ERR_ELEM_INVALID));
 	if (!has_valid_path(map))
 		return (handle_error(ERR_NO_PATH));
-	i = 0;
-	while (map[i])
-	{
-		ft_printf("%s\n", map[i]);
-		i++;
-	}
+	print_map(map);
 	return (0);
 }
