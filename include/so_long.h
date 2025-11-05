@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/05 14:54:30 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:34:00 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,6 @@ char	**create_visited_map(int width, int height);
 void	free_visited(char **visited);
 void	free_visited_partial(char **visited, int until);
 int		check_accessible(char **map, char **visited, int height);
+void	free_map(char **map);
 
 #endif

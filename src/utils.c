@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:17:46 by mona              #+#    #+#             */
-/*   Updated: 2025/11/05 15:00:20 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:34:00 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,10 @@ char	**ft_append_line(char **map, char *line, int count)
 	}
 	new_map[count] = ft_strdup(line);
 	if (!new_map[count])
+	{
+		free(new_map);
 		return (NULL);
+	}
 	free(map);
 	return (new_map);
 }
@@ -80,4 +83,19 @@ int	has_valid_counts(char **map)
 		i++;
 	}
 	return (p_count == 1 && e_count == 1 && c_count >= 1);
+}
+
+void	free_map(char **map)
+{
+	int	i;
+
+	if (!map)
+		return ;
+	i = 0;
+	while (map[i])
+	{
+		free(map[i]);
+		i++;
+	}
+	free(map);
 }
