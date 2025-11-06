@@ -24,9 +24,10 @@ MLX_DIR = libs/minilibix-linux
 OBJ_DIR = obj
 OBJ_BONUS_DIR = obj_bonus
 
+#flag pro mac -Wno-deprecated-non-prototype -std=c17
 # Compiler and base flags
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Wno-deprecated-non-prototype -std=c17 -I $(INCLUDE_DIR) -I $(MLX_DIR)
+CFLAGS = -Wall -Wextra -Werror -I $(INCLUDE_DIR) -I $(MLX_DIR)
 AR = ar rcs
 RM = rm -rf
 
@@ -48,7 +49,8 @@ else
 endif
 
 # Source files
-SRC := so_long.c map_read.c utils.c error_handler.c
+SRC := so_long.c map_read.c map_validate.c map_path.c map_path_utils.c \
+	utils.c error_handler.c
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
