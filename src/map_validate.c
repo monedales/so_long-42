@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 15:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/05 14:51:57 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/06 17:08:28 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,18 @@ int	has_closed_walls(char **map)
 	if (!check_vertical_walls(map, width, height))
 		return (0);
 	return (1);
+}
+
+int	has_ber_extension(const char *filename)
+{
+	size_t	len;
+
+	if (!filename)
+		return (0);
+	len = ft_strlen(filename);
+	if (len < 4)
+		return (0);
+	if (ft_strncmp(filename + len - 4, ".ber", 4) == 0)
+		return (1);
+	return (0);
 }

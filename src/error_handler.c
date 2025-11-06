@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:43:18 by mona              #+#    #+#             */
-/*   Updated: 2025/11/05 18:37:44 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/06 16:54:09 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,9 @@ int	handle_error(t_error error)
 		"Error\nmap has invalid characters\n",
 		"Error\nmap is not closed by walls\n",
 		"Error\ninvalid number of elements (P/E/C)\n",
-		"Error\nno valid path (unreachable collectibles or exit)\n"
+		"Error\nno valid path (unreachable collectibles or exit)\n",
+		"Error\nfailed to create window\n",
+		"Error\nfailed to load map\n"
 	};
 
 	if (error > 0 && error < (int)(sizeof(messages) / sizeof(messages[0])))
