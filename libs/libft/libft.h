@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:13:11 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/09/26 15:35:55 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/06 21:19:35 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,7 @@ int		ft_printptr(unsigned long n);
 //get next line
 char	*get_next_line(int fd);
 void	ft_memdel(void **address_ptr);
+
+char	**ft_append_line(char **map, char *line, int count);
 
 #endif
