@@ -6,23 +6,11 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 18:18:25 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/05 17:58:28 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/06 20:59:41 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
-
-static void	print_map(char **map)
-{
-	int	i;
-
-	i = 0;
-	while (map[i])
-	{
-		ft_printf("%s\n", map[i]);
-		i++;
-	}
-}
 
 static int	validate_map(char **map)
 {
@@ -39,25 +27,39 @@ static int	validate_map(char **map)
 	return (0);
 }
 
+static void	init_game(t_game *game)
+{
+	game->mlx = mlx_init();
+	if (!game->mlx)
+		handle_error(ERR_NO_WIN);
+	parse_map_dimensions(game);
+	parse_map_data(game);
+	init_window(game);
+	load_textures(game);
+	render_map(game);
+	mlx_hook(game->win, 17, 0, handle_close, game);
+	mlx_key_hook(game->win, handle_keypress, game);
+}
+
 int	main(int argc, char **argv)
 {
-	char	**map;
+	t_game	game;
 	int		error;
 
 	if (argc != 2)
 		return (handle_error(ERR_ARGS));
 	if (!has_ber_extension(argv[1]))
 		return (handle_error(ERR_NOBER));
-	map = read_map(argv[1]);
-	if (!map)
+	game.map.grid = read_map(argv[1]);
+	if (!game.map.grid)
 		return (handle_error(ERR_FILE));
-	error = validate_map(map);
+	error = validate_map(game.map.grid);
 	if (error)
 	{
-		free_map(map);
+		free_map(game.map.grid);
 		return (handle_error(error));
 	}
-	print_map(map);
-	free_map(map);
+	init_game(&game);
+	mlx_loop(game.mlx);
 	return (0);
 }

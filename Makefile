@@ -50,7 +50,7 @@ endif
 
 # Source files
 SRC := so_long.c map_read.c map_validate.c map_path.c map_path_utils.c \
-	utils.c error_handler.c
+	utils.c error_handler.c init.c render.c mlx_utils.c
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
@@ -145,3 +145,11 @@ re: fclean all
 
 normi:
 	@norminette -R CheckForbiddenSourceHeader $(addprefix $(SRC_DIR)/, $(SRC)) $(INCLUDE_DIR)/*.h
+# Valgrind testing
+valgrind: $(NAME)
+	@echo "$(YELLOW)Running valgrind with MLX suppressions...$(RESET)"
+	@valgrind --leak-check=full --suppressions=valgrind.supp --show-leak-kinds=definite,indirect ./$(NAME) maps/medium.ber
+
+valgrind-full: $(NAME)
+	@echo "$(YELLOW)Running valgrind showing all leaks...$(RESET)"
+	@valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) maps/medium.ber
