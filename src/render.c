@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/07 13:49:53 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/07 17:06:04 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,11 @@ void	render_map(t_game *game)
 			if (game->map.grid[y][x] == '1')
 				render_tile(game, x, y, &game->wall);
 			else if (game->map.grid[y][x] == 'C')
-				render_tile(game, x, y, &game->collectible);
+			{
+				draw_sprite_to_frame(&game->frame, &game->collectible,
+					x * game->tile_size + (game->tile_size - game->collectible.width) / 2,
+					y * game->tile_size + (game->tile_size - game->collectible.height) / 2);
+			}
 			else if (game->map.grid[y][x] == 'E')
 			{
 				draw_sprite_to_frame(&game->frame, &game->exit,
