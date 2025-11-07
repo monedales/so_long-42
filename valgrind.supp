@@ -1,0 +1,73 @@
+# Valgrind suppression file for MLX and X11 libraries
+# These are expected memory leaks from the MiniLibX and X11 libraries
+
+{
+   mlx_all_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+}
+
+{
+   x11_all_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libX11*.so*
+}
+
+{
+   xext_all_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libXext*.so*
+}
+
+{
+   xcb_all_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libxcb*.so*
+}
+
+{
+   mlx_init_all
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:mlx_init
+}
+
+{
+   x11_display_all
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:XOpenDisplay
+}
+
+{
+   libc_dlopen
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:_dl_*
+}
+
+{
+   libc_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libc*.so*
+}
