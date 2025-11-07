@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:43:18 by mona              #+#    #+#             */
-/*   Updated: 2025/11/06 16:54:09 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/07 12:07:14 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ int	handle_error(t_error error)
 		"Error\ninvalid number of elements (P/E/C)\n",
 		"Error\nno valid path (unreachable collectibles or exit)\n",
 		"Error\nfailed to create window\n",
-		"Error\nfailed to load map\n"
+		"Error\nfailed to load map\n",
+		"Error\nfailed to load texture: "
 	};
 
 	if (error > 0 && error < (int)(sizeof(messages) / sizeof(messages[0])))

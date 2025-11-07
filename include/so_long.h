@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/06 21:38:28 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/07 12:07:33 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # define KEY_A 97
 # define KEY_D 100
 # define KEY_ESC 65307
+# define TRANSPARENT_COLOR 0xFF00FF
 
 # include "../libs/libft/libft.h"
 # include "../libs/minilibix-linux/mlx.h"
@@ -35,7 +36,8 @@ typedef enum e_error
 	ERR_ELEM_INVALID,
 	ERR_NO_PATH,
 	ERR_NO_WIN,
-	ERR_MAP_FAILED
+	ERR_MAP_FAILED,
+	ERR_TEXTURE_FAILED
 }				t_error;
 
 typedef struct s_point
@@ -47,8 +49,12 @@ typedef struct s_point
 typedef struct s_sprite
 {
 	void		*img;
+	char		*addr;
 	int			width;
 	int			height;
+	int			bpp;
+	int			line_len;
+	int			endian;
 }				t_sprite;
 
 typedef struct s_map
@@ -72,6 +78,7 @@ typedef struct s_game
 	t_sprite	collectible;
 	t_sprite	exit;
 	t_sprite	player;
+	t_sprite	frame;
 	int			moves;
 	int			tile_size;
 }				t_game;
@@ -104,6 +111,12 @@ void			parse_map_dimensions(t_game *game);
 void			init_window(t_game *game);
 void			load_textures(t_game *game);
 void			render_map(t_game *game);
+
+/**** Rendering ****/
+void			draw_sprite_opaque(t_sprite *frame, t_sprite *sprite,
+					int px, int py);
+void			draw_sprite_to_frame(t_sprite *frame, t_sprite *sprite,
+					int px, int py);
 
 /**** Utils ****/
 // char			**ft_append_line(char **map, char *line, int count);
