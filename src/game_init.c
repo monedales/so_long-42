@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/06 21:44:03 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:34:04 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,11 @@ void	init_window(t_game *game)
 			"So Long and thanx for all the cheese");
 	if (!game->win)
 		handle_error(ERR_NO_WIN);
+	game->frame.img = mlx_new_image(game->mlx, win_width, win_height);
+	game->frame.addr = mlx_get_data_addr(game->frame.img, &game->frame.bpp,
+			&game->frame.line_len, &game->frame.endian);
+	game->frame.width = win_width;
+	game->frame.height = win_height;
 }
 
 void	parse_map_dimensions(t_game *game)

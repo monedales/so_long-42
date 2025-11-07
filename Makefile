@@ -37,7 +37,7 @@ UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S), Darwin)
 	# macOS config - Using XQuartz (X11)
 	X11_PATH = /opt/X11
-	CFLAGS += -I $(X11_PATH)/include
+	CFLAGS += -I $(X11_PATH)/include -Wno-deprecated-non-prototype
 	LDFLAGS := -L $(LIBFT_DIR) -L $(MLX_DIR) -L $(X11_PATH)/lib
 	LDLIBS  := -lft -lmlx -lXext -lX11 -lm -lz
 else ifeq ($(UNAME_S), Linux)
@@ -50,7 +50,7 @@ endif
 
 # Source files
 SRC := so_long.c map_parser.c map_validator.c map_count.c pathfinding.c \
-	error_handler.c game_init.c texture_loader.c render.c events.c \
+	error_handler.c game_init.c texture_loader.c render.c render_utils.c events.c \
 	free_utils.c file_utils.c
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))

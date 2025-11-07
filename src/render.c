@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/06 21:38:29 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/07 13:49:53 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ static void	render_tile(t_game *game, int x, int y, t_sprite *img)
 
 	offset_x = (game->tile_size - img->width) / 2;
 	offset_y = (game->tile_size - img->height) / 2;
-	mlx_put_image_to_window(game->mlx, game->win, img->img, x * game->tile_size
-		+ offset_x, y * game->tile_size + offset_y);
+	draw_sprite_opaque(&game->frame, img,
+		x * game->tile_size + offset_x,
+		y * game->tile_size + offset_y);
 }
 
 void	render_map(t_game *game)
@@ -40,11 +41,20 @@ void	render_map(t_game *game)
 			else if (game->map.grid[y][x] == 'C')
 				render_tile(game, x, y, &game->collectible);
 			else if (game->map.grid[y][x] == 'E')
-				render_tile(game, x, y, &game->exit);
+			{
+				draw_sprite_to_frame(&game->frame, &game->exit,
+					x * game->tile_size + (game->tile_size - game->exit.width) / 2,
+					y * game->tile_size + (game->tile_size - game->exit.height) / 2);
+			}
 			else if (game->map.grid[y][x] == 'P')
-				render_tile(game, x, y, &game->player);
+			{
+				draw_sprite_to_frame(&game->frame, &game->player,
+					x * game->tile_size + (game->tile_size - game->player.width) / 2,
+					y * game->tile_size + (game->tile_size - game->player.height) / 2);
+			}
 			x++;
 		}
 		y++;
 	}
+	mlx_put_image_to_window(game->mlx, game->win, game->frame.img, 0, 0);
 }
