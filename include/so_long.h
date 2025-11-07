@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/06 21:12:15 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/06 21:38:28 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct s_flood_params
 }				t_flood_params;
 
 /**** Map Validation ****/
+int				validate_map(char **map);
 int				has_ber_extension(const char *filename);
 char			**read_map(const char *path);
 int				is_rectangular(char **map);
@@ -97,11 +98,10 @@ char			**create_visited_map(int width, int height);
 int				check_accessible(char **map, char **visited, int height);
 
 /**** Game Initialization ****/
+void			init_game(t_game *game);
 void			parse_map_data(t_game *game);
 void			parse_map_dimensions(t_game *game);
 void			init_window(t_game *game);
-
-/**** Rendering ****/
 void			load_textures(t_game *game);
 void			render_map(t_game *game);
 

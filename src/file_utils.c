@@ -1,36 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long.c                                          :+:      :+:    :+:   */
+/*   file_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/31 18:18:25 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/06 21:38:29 by maria-ol         ###   ########.fr       */
+/*   Created: 2025/11/06 21:30:00 by maria-ol          #+#    #+#             */
+/*   Updated: 2025/11/06 21:44:05 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-int	main(int argc, char **argv)
+int	has_ber_extension(const char *filename)
 {
-	t_game	game;
-	int		error;
+	size_t	len;
 
-	if (argc != 2)
-		return (handle_error(ERR_ARGS));
-	if (!has_ber_extension(argv[1]))
-		return (handle_error(ERR_NOBER));
-	game.map.grid = read_map(argv[1]);
-	if (!game.map.grid)
-		return (handle_error(ERR_FILE));
-	error = validate_map(game.map.grid);
-	if (error)
-	{
-		free_map(game.map.grid);
-		return (handle_error(error));
-	}
-	init_game(&game);
-	mlx_loop(game.mlx);
+	if (!filename)
+		return (0);
+	len = ft_strlen(filename);
+	if (len < 4)
+		return (0);
+	if (ft_strncmp(filename + len - 4, ".ber", 4) == 0)
+		return (1);
 	return (0);
 }

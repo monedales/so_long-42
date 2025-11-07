@@ -15,7 +15,7 @@ SRC = \
 	ft_strmapi.c ft_strtrim.c ft_striteri.c ft_strjoin.c \
 	ft_substr.c ft_tolower.c ft_toupper.c \
 	ft_printf.c ft_print_chars.c ft_print_hexptr.c ft_print_numbers.c \
-	get_next_line.c ft_memdel.c \
+	get_next_line.c ft_memdel.c ft_append_line.c \
 
 SRC_BONUS =	\
 	ft_lstnew_bonus.c ft_lstadd_front_bonus.c ft_lstsize_bonus.c \
