@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/06 21:22:42 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:20:29 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ static void	free_textures(t_game *game)
 		mlx_destroy_image(game->mlx, game->exit.img);
 	if (game->player.img)
 		mlx_destroy_image(game->mlx, game->player.img);
+	if (game->frame.img)
+		mlx_destroy_image(game->mlx, game->frame.img);
 }
 
 int	close_game(t_game *game)
