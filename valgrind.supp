@@ -1,6 +1,33 @@
 # Valgrind suppression file for MLX and X11 libraries
 # These are expected memory leaks from the MiniLibX and X11 libraries
 
+# to run with a suppression file:
+# valgrind --leak-check=full --suppressions=./valgrind.supp ./so_long maps/medium.ber
+
+# to generate a suppression file:
+# valgrind --leak-check=full --show-leak-kinds=all --gen-suppressions=all ./so_long maps/medium.ber 2>&1 | grep -A 20 "insert_a_suppression_name_here"
+
+{
+   mlx_new_image_calloc
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:mlx_int_new_xshm_image
+   fun:mlx_new_image
+   ...
+}
+
+{
+   xshm_create_image
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:XShmCreateImage
+   fun:mlx_int_new_xshm_image
+   fun:mlx_new_image
+   ...
+}
+
 {
    mlx_all_reachable
    Memcheck:Leak
