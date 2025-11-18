@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/18 17:55:09 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/18 18:29:51 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,19 +40,27 @@ static void	move_player(t_game *game, int new_x, int new_y)
 	{
 		ft_printf("🎉 You won! Moves: %d\n", game->moves + 1);
 		close_game(game);
-		return ;
 	}
 	if (old_x == game->map.exit_pos.x && old_y == game->map.exit_pos.y)
 		game->map.grid[old_y][old_x] = 'E';
 	else
 		game->map.grid[old_y][old_x] = '0';
-	if (new_x != game->map.exit_pos.x || new_y != game->map.exit_pos.y)
-		game->map.grid[new_y][new_x] = 'P';
+	game->map.grid[new_y][new_x] = 'P';
 	game->map.player_pos.x = new_x;
 	game->map.player_pos.y = new_y;
 	game->moves++;
-	ft_printf("Moves: %d\n", game->moves);
-	render_map(game);
+}
+
+static void	process_movement(int keycode, int *new_x, int *new_y)
+{
+	if (keycode == KEY_W || keycode == KEY_UP)
+		(*new_y)--;
+	else if (keycode == KEY_S || keycode == KEY_DOWN)
+		(*new_y)++;
+	else if (keycode == KEY_A || keycode == KEY_LEFT)
+		(*new_x)--;
+	else if (keycode == KEY_D || keycode == KEY_RIGHT)
+		(*new_x)++;
 }
 
 int	handle_keypress(int keycode, t_game *game)
@@ -64,16 +72,13 @@ int	handle_keypress(int keycode, t_game *game)
 	new_y = game->map.player_pos.y;
 	if (keycode == KEY_ESC)
 		close_game(game);
-	else if (keycode == KEY_W || keycode == KEY_UP)
-		new_y--;
-	else if (keycode == KEY_S || keycode == KEY_DOWN)
-		new_y++;
-	else if (keycode == KEY_A || keycode == KEY_LEFT)
-		new_x--;
-	else if (keycode == KEY_D || keycode == KEY_RIGHT)
-		new_x++;
+	process_movement(keycode, &new_x, &new_y);
 	if (is_valid_move(game, new_x, new_y))
+	{
 		move_player(game, new_x, new_y);
+		ft_printf("Moves: %d\n", game->moves);
+		render_map(game);
+	}
 	return (0);
 }
 
