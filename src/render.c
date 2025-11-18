@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/07 17:06:04 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/18 14:18:53 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,16 @@ void	render_map(t_game *game)
 			}
 			else if (game->map.grid[y][x] == 'P')
 			{
+				draw_sprite_to_frame(&game->frame, &game->player,
+					x * game->tile_size + (game->tile_size - game->player.width) / 2,
+					y * game->tile_size + (game->tile_size - game->player.height) / 2);
+			}
+			if (x == game->map.player_pos.x && y == game->map.player_pos.y
+				&& x == game->map.exit_pos.x && y == game->map.exit_pos.y)
+			{
+				draw_sprite_to_frame(&game->frame, &game->exit,
+					x * game->tile_size + (game->tile_size - game->exit.width) / 2,
+					y * game->tile_size + (game->tile_size - game->exit.height) / 2);
 				draw_sprite_to_frame(&game->frame, &game->player,
 					x * game->tile_size + (game->tile_size - game->player.width) / 2,
 					y * game->tile_size + (game->tile_size - game->player.height) / 2);
