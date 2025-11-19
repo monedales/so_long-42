@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 18:42:18 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 19:01:11 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,11 @@ void			render_map(t_game *game);
 void			put_pixel(t_sprite *frame, int x, int y, int color);
 
 /**** Rendering ****/
+void			render_tile(t_game *game, int x, int y, t_sprite *img);
+void			render_roof(t_game *game, t_sprite *sprite, int x, int y);
+void			fill_floor_base(t_game *game, int x, int y);
+void			render_sprite_centered(t_game *game, t_sprite *sprite,
+					int x, int y);
 void			draw_sprite_opaque(t_sprite *frame, t_sprite *sprite,
 					int px, int py);
 void			draw_sprite_to_frame(t_sprite *frame, t_sprite *sprite,

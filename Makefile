@@ -50,8 +50,8 @@ endif
 
 # Source files
 SRC := so_long.c map_parser.c map_validator.c map_count.c pathfinding.c \
-	error_handler.c game_init.c texture_loader.c render.c render_utils.c events.c \
-	free_utils.c file_utils.c
+	error_handler.c game_init.c texture_loader.c render.c render_tiles.c \
+	render_utils.c events.c free_utils.c file_utils.c
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
