@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 14:26:31 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 18:00:00 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ static void	load_single_texture(t_game *game, t_sprite *img, char *path)
 
 void	load_textures(t_game *game)
 {
+	load_single_texture(game, &game->wall, "assets/tiles/tile-wall-square.xpm");
+	load_single_texture(game, &game->roof, "assets/tiles/tile-roof.xpm");
 	load_single_texture(game, &game->floor, "assets/tiles/tile_floor.xpm");
 	load_single_texture(game, &game->platform,
 		"assets/tiles/platform.xpm");

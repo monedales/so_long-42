@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 14:11:55 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 18:42:18 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ typedef struct s_game
 	void		*mlx;
 	void		*win;
 	t_map		map;
+	t_sprite	wall;
+	t_sprite	roof;
 	t_sprite	floor;
 	t_sprite	platform;
 	t_sprite	collectible;
@@ -115,6 +117,7 @@ void			parse_map_dimensions(t_game *game);
 void			init_window(t_game *game);
 void			load_textures(t_game *game);
 void			render_map(t_game *game);
+void			put_pixel(t_sprite *frame, int x, int y, int color);
 
 /**** Rendering ****/
 void			draw_sprite_opaque(t_sprite *frame, t_sprite *sprite,
