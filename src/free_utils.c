@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 14:12:30 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 18:50:09 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,14 @@ void	free_visited(char **visited)
 
 static void	free_textures(t_game *game)
 {
-	// if (game->wall.img)
-	// 	mlx_destroy_image(game->mlx, game->wall.img);
+	if (game->wall.img)
+		mlx_destroy_image(game->mlx, game->wall.img);
+	if (game->roof.img)
+		mlx_destroy_image(game->mlx, game->roof.img);
 	if (game->floor.img)
 		mlx_destroy_image(game->mlx, game->floor.img);
+	if (game->platform.img)
+		mlx_destroy_image(game->mlx, game->platform.img);
 	if (game->collectible.img)
 		mlx_destroy_image(game->mlx, game->collectible.img);
 	if (game->exit.img)
