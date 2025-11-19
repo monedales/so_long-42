@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 13:54:20 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 14:26:31 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,9 @@ static void	load_single_texture(t_game *game, t_sprite *img, char *path)
 
 void	load_textures(t_game *game)
 {
-	load_single_texture(game, &game->wall, "assets/temp/wall.xpm");
-	load_single_texture(game, &game->floor, "assets/temp/floor.xpm");
+	load_single_texture(game, &game->floor, "assets/tiles/tile_floor.xpm");
 	load_single_texture(game, &game->platform,
-		"so_long-sprites/platform.xpm");
+		"assets/tiles/platform.xpm");
 	load_single_texture(game, &game->collectible,
 		"assets/cheese/blue-cheese.xpm");
 	load_single_texture(game, &game->exit, "assets/exit/exit-spaceship.xpm");

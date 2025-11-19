@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 13:54:20 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 14:29:10 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,15 @@ static void	render_tile(t_game *game, int x, int y, t_sprite *img)
 
 	offset_x = (game->tile_size - img->width) / 2;
 	offset_y = (game->tile_size - img->height) / 2;
-	draw_sprite_opaque(&game->frame, img,
+	draw_sprite_to_frame(&game->frame, img,
 		x * game->tile_size + offset_x,
 		y * game->tile_size + offset_y);
 }
 
 static void	render_cell(t_game *game, int x, int y)
 {
-	render_tile(game, x, y, &game->floor);
-	if (game->map.grid[y][x] == '1')
-		render_tile(game, x, y, &game->wall);
+	if (game->map.grid[y][x] == 'G')
+		render_tile(game, x, y, &game->floor);
 	if (game->map.grid[y][x] == 'F')
 		render_sprite_centered(game, &game->platform, x, y);
 	if (game->map.grid[y][x] == 'C')
@@ -62,11 +61,37 @@ static void	render_cell(t_game *game, int x, int y)
 	render_player_on_exit(game, x, y);
 }
 
+static void	render_gradient_background(t_game *game)
+{
+	int		x;
+	int		y;
+	int		gray;
+	int		color;
+	char	*dst;
+
+	y = 0;
+	while (y < game->frame.height)
+	{
+		gray = 255 - (y * 55 / game->frame.height);
+		color = (gray << 16) | (gray << 8) | gray;
+		x = 0;
+		while (x < game->frame.width)
+		{
+			dst = game->frame.addr + (y * game->frame.line_len
+					+ x * (game->frame.bpp / 8));
+			*(unsigned int *)dst = color;
+			x++;
+		}
+		y++;
+	}
+}
+
 void	render_map(t_game *game)
 {
 	int	x;
 	int	y;
 
+	render_gradient_background(game);
 	y = 0;
 	while (y < game->map.height)
 	{

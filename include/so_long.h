@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 13:54:20 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 14:11:55 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ typedef struct s_game
 	void		*mlx;
 	void		*win;
 	t_map		map;
-	t_sprite	wall;
 	t_sprite	floor;
 	t_sprite	platform;
 	t_sprite	collectible;
