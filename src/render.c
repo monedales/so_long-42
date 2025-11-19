@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/18 18:29:52 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 13:54:20 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,13 @@ static void	render_cell(t_game *game, int x, int y)
 	render_tile(game, x, y, &game->floor);
 	if (game->map.grid[y][x] == '1')
 		render_tile(game, x, y, &game->wall);
-	else if (game->map.grid[y][x] == 'C')
+	if (game->map.grid[y][x] == 'F')
+		render_sprite_centered(game, &game->platform, x, y);
+	if (game->map.grid[y][x] == 'C')
 		render_sprite_centered(game, &game->collectible, x, y);
-	else if (game->map.grid[y][x] == 'E')
+	if (game->map.grid[y][x] == 'E')
 		render_sprite_centered(game, &game->exit, x, y);
-	else if (game->map.grid[y][x] == 'P')
+	if (game->map.grid[y][x] == 'P')
 		render_sprite_centered(game, &game->player, x, y);
 	render_player_on_exit(game, x, y);
 }

@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/18 17:58:48 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 13:54:20 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ typedef struct s_game
 	t_map		map;
 	t_sprite	wall;
 	t_sprite	floor;
+	t_sprite	platform;
 	t_sprite	collectible;
 	t_sprite	exit;
 	t_sprite	player;

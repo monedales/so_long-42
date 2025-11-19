@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/18 18:29:51 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 13:54:20 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ static int	is_valid_move(t_game *game, int new_x, int new_y)
 	if (new_y < 0 || new_y >= game->map.height)
 		return (0);
 	if (game->map.grid[new_y][new_x] == '1')
+		return (0);
+	if (game->map.grid[new_y][new_x] == 'F')
 		return (0);
 	return (1);
 }
