@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 14:29:10 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 18:44:15 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,59 @@ static void	render_tile(t_game *game, int x, int y, t_sprite *img)
 		y * game->tile_size + offset_y);
 }
 
+static void	render_roof(t_game *game, t_sprite *sprite, int x, int y)
+{
+	int	offset_x;
+
+	offset_x = (game->tile_size - sprite->width) / 2;
+	draw_sprite_to_frame(&game->frame, sprite,
+		x * game->tile_size + offset_x,
+		y * game->tile_size);
+}
+
+// static void	render_floor(t_game *game, t_sprite *sprite, int x, int y)
+// {
+// 	int	offset_x;
+// 	int	offset_y;
+
+// 	offset_x = (game->tile_size - sprite->width) / 2;
+// 	offset_y = game->tile_size - sprite->height;
+// 	draw_sprite_to_frame(&game->frame, sprite,
+// 		x * game->tile_size + offset_x,
+// 		y * game->tile_size + offset_y);
+// }
+
+static void	fill_floor_base(t_game *game, int x, int y)
+{
+	int		px;
+	int		py;
+	int		fill_color;
+
+	fill_color = 0x713A2E;
+	py = y * game->tile_size + game->floor.height;
+	while (py < (y + 1) * game->tile_size)
+	{
+		px = x * game->tile_size;
+		while (px < (x + 1) * game->tile_size)
+		{
+			put_pixel(&game->frame, px, py, fill_color);
+			px++;
+		}
+		py++;
+	}
+}
+
 static void	render_cell(t_game *game, int x, int y)
 {
+	if (game->map.grid[y][x] == '1')
+		render_tile(game, x, y, &game->wall);
+	if (game->map.grid[y][x] == 'R')
+		render_roof(game, &game->roof, x, y);
 	if (game->map.grid[y][x] == 'G')
-		render_tile(game, x, y, &game->floor);
+	{
+		fill_floor_base(game, x, y);
+		render_roof(game, &game->floor, x, y);
+	}
 	if (game->map.grid[y][x] == 'F')
 		render_sprite_centered(game, &game->platform, x, y);
 	if (game->map.grid[y][x] == 'C')

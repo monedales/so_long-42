@@ -6,13 +6,13 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 11:15:00 by mona              #+#    #+#             */
-/*   Updated: 2025/11/07 12:54:49 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/19 18:42:18 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-static void	put_pixel(t_sprite *frame, int x, int y, int color)
+void	put_pixel(t_sprite *frame, int x, int y, int color)
 {
 	char	*dst;
 
