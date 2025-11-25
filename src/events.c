@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 17:53:46 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/21 19:38:19 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static void	move_player(t_game *game, int new_x, int new_y)
 	if (game->map.grid[new_y][new_x] == 'E'
 		&& game->map.collected == game->map.collectibles)
 	{
-		ft_printf("🎉 You won! Moves: %d\n", game->moves + 1);
+		ft_printf("🎉 WEERK! You won! Moves: %d\n", game->moves + 1);
 		close_game(game);
 	}
 	if (old_x == game->map.exit_pos.x && old_y == game->map.exit_pos.y)
