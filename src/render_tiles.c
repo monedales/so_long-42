@@ -6,11 +6,23 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 19:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/11/19 19:01:11 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/26 16:48:04 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
+
+t_sprite	*get_player_sprite(t_game *game)
+{
+	if (game->player_dir == DIR_BACK)
+		return (&game->player_back);
+	else if (game->player_dir == DIR_LEFT)
+		return (&game->player_left);
+	else if (game->player_dir == DIR_RIGHT)
+		return (&game->player_left);
+	else
+		return (&game->player_front);
+}
 
 void	render_tile(t_game *game, int x, int y, t_sprite *img)
 {
@@ -32,26 +44,6 @@ void	render_roof(t_game *game, t_sprite *sprite, int x, int y)
 	draw_sprite_to_frame(&game->frame, sprite,
 		x * game->tile_size + offset_x,
 		y * game->tile_size);
-}
-
-void	fill_floor_base(t_game *game, int x, int y)
-{
-	int		px;
-	int		py;
-	int		fill_color;
-
-	fill_color = 0x654321;
-	py = y * game->tile_size + game->floor.height;
-	while (py < (y + 1) * game->tile_size)
-	{
-		px = x * game->tile_size;
-		while (px < (x + 1) * game->tile_size)
-		{
-			put_pixel(&game->frame, px, py, fill_color);
-			px++;
-		}
-		py++;
-	}
 }
 
 void	render_sprite_centered(t_game *game, t_sprite *sprite, int x, int y)
