@@ -6,12 +6,23 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 17:53:46 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/02 20:32:03 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+/**
+ * @brief Removes the trailing newline character from a string.
+ *
+ * This helper function checks if the last character of the string is a
+ * newline ('\n') and replaces it with a null terminator to clean up
+ * lines read from files.
+ * 
+ * @param line The string to trim. Must not be NULL.
+ *
+ * @return The trimmed string (same pointer as input).
+ */
 static char	*trim_newline(char *line)
 {
 	size_t	len;
@@ -22,6 +33,17 @@ static char	*trim_newline(char *line)
 	return (line);
 }
 
+/**
+ * @brief Handles errors during map file reading.
+ *
+ * Cleans up resources by freeing the current line and closing the
+ * file descriptor when an error occurs during map parsing.
+ * 
+ * @param line The current line buffer to free.
+ * @param fd The file descriptor to close.
+ *
+ * @return Always returns NULL to indicate failure.
+ */
 static char	**handle_read_error(char *line, int fd)
 {
 	free(line);
@@ -29,6 +51,19 @@ static char	**handle_read_error(char *line, int fd)
 	return (NULL);
 }
 
+/**
+ * @brief Reads a map file and returns it as a 2D array of strings.
+ *
+ * Opens the file at the given path, reads it line by line using
+ * get_next_line, and builds a dynamically allocated 2D array where
+ * each element is a line from the file. Newlines are trimmed from
+ * each line. Properly cleans up resources on error or completion.
+ * 
+ * @param path The path to the map file to read.
+ *
+ * @return A NULL-terminated array of strings representing the map,
+ *         or NULL if the file cannot be opened or memory allocation fails.
+ */
 char	**read_map(const char *path)
 {
 	int		fd;
@@ -56,6 +91,18 @@ char	**read_map(const char *path)
 	return (map);
 }
 
+/**
+ * @brief Validates that all rows in the map have the same length.
+ *
+ * Checks if the map forms a proper rectangle by comparing the length
+ * of each row to the first row. This ensures the map grid has uniform
+ * dimensions required for proper game rendering and collision detection.
+ * 
+ * @param map A NULL-terminated 2D array of strings representing the map.
+ *
+ * @return 1 if the map is rectangular (all rows have equal length),
+ *         0 if the map is NULL, empty, or has rows of different lengths.
+ */
 int	is_rectangular(char **map)
 {
 	int	len;
@@ -74,6 +121,24 @@ int	is_rectangular(char **map)
 	return (1);
 }
 
+/**
+ * @brief Validates that the map contains only allowed characters.
+ *
+ * Iterates through every character in the map and verifies it matches
+ * one of the valid game elements. Valid characters are:
+ * - '0': Empty space
+ * - '1': Wall
+ * - 'C': Collectible
+ * - 'E': Exit
+ * - 'P': Player starting position
+ * - 'F': Platform (bonus)
+ * - 'G': Ground/floor (bonus)
+ * - 'R': Roof/ceiling (bonus)
+ * 
+ * @param map A NULL-terminated 2D array of strings representing the map.
+ *
+ * @return 1 if all characters are valid, 0 if any invalid character is found.
+ */
 int	has_only_valid_chars(char **map)
 {
 	int		i;
