@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 18:50:09 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,14 @@ static void	free_textures(t_game *game)
 		mlx_destroy_image(game->mlx, game->collectible.img);
 	if (game->exit.img)
 		mlx_destroy_image(game->mlx, game->exit.img);
-	if (game->player.img)
-		mlx_destroy_image(game->mlx, game->player.img);
+	if (game->player.front.img)
+		mlx_destroy_image(game->mlx, game->player.front.img);
+	if (game->player.back.img)
+		mlx_destroy_image(game->mlx, game->player.back.img);
+	if (game->player.left.img)
+		mlx_destroy_image(game->mlx, game->player.left.img);
+	if (game->player.collect.img)
+		mlx_destroy_image(game->mlx, game->player.collect.img);
 	if (game->frame.img)
 		mlx_destroy_image(game->mlx, game->frame.img);
 }

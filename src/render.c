@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 19:01:11 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/26 16:48:04 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,27 @@
 
 static void	render_player_on_exit(t_game *game, int x, int y)
 {
+	t_sprite	*player_sprite;
+
 	if (x == game->map.player_pos.x && y == game->map.player_pos.y
 		&& x == game->map.exit_pos.x && y == game->map.exit_pos.y)
 	{
+		player_sprite = get_player_sprite(game);
 		render_sprite_centered(game, &game->exit, x, y);
-		render_sprite_centered(game, &game->player, x, y);
+		render_sprite_centered(game, player_sprite, x, y);
 	}
 }
 
 static void	render_cell(t_game *game, int x, int y)
 {
+	t_sprite	*player_sprite;
+
 	if (game->map.grid[y][x] == '1')
 		render_tile(game, x, y, &game->wall);
 	if (game->map.grid[y][x] == 'R')
 		render_roof(game, &game->roof, x, y);
 	if (game->map.grid[y][x] == 'G')
-	{
-		fill_floor_base(game, x, y);
-		render_roof(game, &game->floor, x, y);
-	}
+		render_tile(game, x, y, &game->floor);
 	if (game->map.grid[y][x] == 'F')
 		render_sprite_centered(game, &game->platform, x, y);
 	if (game->map.grid[y][x] == 'C')
@@ -40,7 +42,10 @@ static void	render_cell(t_game *game, int x, int y)
 	if (game->map.grid[y][x] == 'E')
 		render_sprite_centered(game, &game->exit, x, y);
 	if (game->map.grid[y][x] == 'P')
-		render_sprite_centered(game, &game->player, x, y);
+	{
+		player_sprite = get_player_sprite(game);
+		render_sprite_centered(game, player_sprite, x, y);
+	}
 	render_player_on_exit(game, x, y);
 }
 
@@ -69,6 +74,28 @@ static void	render_gradient_background(t_game *game)
 	}
 }
 
+static void	render_move_counter(t_game *game)
+{
+	char	*moves_str;
+	char	*counter_text;
+	int		i;
+	int		j;
+
+	moves_str = ft_itoa(game->moves);
+	counter_text = ft_strjoin("Moves: ", moves_str);
+	i = -1;
+	while (++i < 2)
+	{
+		j = -1;
+		while (++j < 2)
+			mlx_string_put(game->mlx, game->win, 18 + i, 28 + j,
+				0x000000, counter_text);
+	}
+	mlx_string_put(game->mlx, game->win, 18, 28, 0xFFFFFF, counter_text);
+	free(moves_str);
+	free(counter_text);
+}
+
 void	render_map(t_game *game)
 {
 	int	x;
@@ -87,4 +114,5 @@ void	render_map(t_game *game)
 		y++;
 	}
 	mlx_put_image_to_window(game->mlx, game->win, game->frame.img, 0, 0);
+	render_move_counter(game);
 }

@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/21 19:38:19 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,28 @@ static void	move_player(t_game *game, int new_x, int new_y)
 	game->moves++;
 }
 
-static void	process_movement(int keycode, int *new_x, int *new_y)
+static void	process_movement(int keycode, int *new_x, int *new_y, t_game *game)
 {
 	if (keycode == KEY_W || keycode == KEY_UP)
+	{
 		(*new_y)--;
+		game->player.current_dir = DIR_BACK;
+	}
 	else if (keycode == KEY_S || keycode == KEY_DOWN)
+	{
 		(*new_y)++;
+		game->player.current_dir = DIR_FRONT;
+	}
 	else if (keycode == KEY_A || keycode == KEY_LEFT)
+	{
 		(*new_x)--;
+		game->player.current_dir = DIR_LEFT;
+	}
 	else if (keycode == KEY_D || keycode == KEY_RIGHT)
+	{
 		(*new_x)++;
+		game->player.current_dir = DIR_RIGHT;
+	}
 }
 
 int	handle_keypress(int keycode, t_game *game)
@@ -78,7 +90,7 @@ int	handle_keypress(int keycode, t_game *game)
 	new_y = game->map.player_pos.y;
 	if (keycode == KEY_ESC)
 		close_game(game);
-	process_movement(keycode, &new_x, &new_y);
+	process_movement(keycode, &new_x, &new_y, game);
 	if (is_valid_move(game, new_x, new_y))
 	{
 		move_player(game, new_x, new_y);

@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 18:00:00 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/26 18:04:20 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,13 @@ void	load_textures(t_game *game)
 		"assets/tiles/platform.xpm");
 	load_single_texture(game, &game->collectible,
 		"assets/cheese/blue-cheese.xpm");
-	load_single_texture(game, &game->exit, "assets/exit/exit-spaceship.xpm");
-	load_single_texture(game, &game->player,
+	load_single_texture(game, &game->exit, "assets/exit/exit-spaceship-80.xpm");
+	load_single_texture(game, &game->player.front,
 		"assets/sprites-louis/louis-front-grumpy.xpm");
+	load_single_texture(game, &game->player.back,
+		"assets/sprites-louis/louis-back1.xpm");
+	load_single_texture(game, &game->player.left,
+		"assets/sprites-louis/louis-side-walk.xpm");
+	load_single_texture(game, &game->player.collect,
+		"assets/sprites-louis/louis-collect.xpm");
 }

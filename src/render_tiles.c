@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 19:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/11/26 16:48:04 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 t_sprite	*get_player_sprite(t_game *game)
 {
-	if (game->player_dir == DIR_BACK)
-		return (&game->player_back);
-	else if (game->player_dir == DIR_LEFT)
-		return (&game->player_left);
-	else if (game->player_dir == DIR_RIGHT)
-		return (&game->player_left);
+	if (game->player.current_dir == DIR_BACK)
+		return (&game->player.back);
+	else if (game->player.current_dir == DIR_LEFT)
+		return (&game->player.left);
+	else if (game->player.current_dir == DIR_RIGHT)
+		return (&game->player.left);
 	else
-		return (&game->player_front);
+		return (&game->player.front);
 }
 
 void	render_tile(t_game *game, int x, int y, t_sprite *img)

@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/07 11:34:04 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ void	parse_map_data(t_game *game)
 	game->map.collectibles = 0;
 	game->map.collected = 0;
 	game->moves = 0;
+	game->player.current_dir = DIR_FRONT;
+	game->player.frame = 0;
 	y = 0;
 	while (y < game->map.height)
 	{

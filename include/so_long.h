@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/19 19:01:11 by mona             ###   ########.fr       */
+/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,14 @@
 # include "../libs/minilibix-linux/mlx.h"
 # include "../libs/minilibix-linux/mlx_int.h"
 # include <stdio.h>
+
+typedef enum e_direction
+{
+	DIR_FRONT,
+	DIR_BACK,
+	DIR_LEFT,
+	DIR_RIGHT
+}				t_direction;
 
 typedef enum e_error
 {
@@ -72,21 +80,31 @@ typedef struct s_map
 	t_point		exit_pos;
 }				t_map;
 
+typedef struct s_player_anim
+{
+	t_sprite	front;
+	t_sprite	back;
+	t_sprite	left;
+	t_sprite	collect;
+	t_direction	current_dir;
+	int			frame;
+}				t_player_anim;
+
 typedef struct s_game
 {
-	void		*mlx;
-	void		*win;
-	t_map		map;
-	t_sprite	wall;
-	t_sprite	roof;
-	t_sprite	floor;
-	t_sprite	platform;
-	t_sprite	collectible;
-	t_sprite	exit;
-	t_sprite	player;
-	t_sprite	frame;
-	int			moves;
-	int			tile_size;
+	void			*mlx;
+	void			*win;
+	t_map			map;
+	t_sprite		wall;
+	t_sprite		roof;
+	t_sprite		floor;
+	t_sprite		platform;
+	t_sprite		collectible;
+	t_sprite		exit;
+	t_sprite		frame;
+	t_player_anim	player;
+	int				moves;
+	int				tile_size;
 }				t_game;
 
 typedef struct s_flood_params
@@ -120,9 +138,9 @@ void			render_map(t_game *game);
 void			put_pixel(t_sprite *frame, int x, int y, int color);
 
 /**** Rendering ****/
+t_sprite		*get_player_sprite(t_game *game);
 void			render_tile(t_game *game, int x, int y, t_sprite *img);
 void			render_roof(t_game *game, t_sprite *sprite, int x, int y);
-void			fill_floor_base(t_game *game, int x, int y);
 void			render_sprite_centered(t_game *game, t_sprite *sprite,
 					int x, int y);
 void			draw_sprite_opaque(t_sprite *frame, t_sprite *sprite,
