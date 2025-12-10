@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 15:34:15 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 16:03:35 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,9 @@ void	parse_map_data(t_game *game)
 	game->player.current_dir = DIR_FRONT;
 	game->player.frame = 0;
 	game->player.anim_counter = 0;
+	game->player.is_collecting = 0;
+	game->player.collect_counter = 0;
+	game->player.walk_frame = 0;
 	game->cheese_frame = 0;
 	game->cheese_counter = 0;
 	y = 0;

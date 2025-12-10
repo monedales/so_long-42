@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 15:40:26 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 16:34:57 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@
 # define TRANSPARENT_COLOR 0xFF00FF
 # define ANIM_DELAY 5000
 # define IDLE_WAIT 300000
-# define CHEESE_DELAY 50000
+# define CHEESE_DELAY 20000
 # define IDLE_FRAMES 5
+# define COLLECT_DURATION 15000
 
 # include "../libs/libft/libft.h"
 # include "../libs/minilibix-linux/mlx.h"
@@ -87,12 +88,17 @@ typedef struct s_map
 typedef struct s_player_anim
 {
 	t_sprite	front;
+	t_sprite	front_paw;
+	t_sprite	front_paw_mirror;
 	t_sprite	back[IDLE_FRAMES];
 	t_sprite	left;
 	t_sprite	collect;
 	t_direction	current_dir;
 	int			frame;
 	int			anim_counter;
+	int			is_collecting;
+	int			collect_counter;
+	int			walk_frame;
 }				t_player_anim;
 
 typedef struct s_game

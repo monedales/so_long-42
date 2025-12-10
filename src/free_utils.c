@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 15:38:53 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 16:34:57 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,10 @@ static void	free_textures(t_game *game)
 		mlx_destroy_image(game->mlx, game->exit.img);
 	if (game->player.front.img)
 		mlx_destroy_image(game->mlx, game->player.front.img);
+	if (game->player.front_paw.img)
+		mlx_destroy_image(game->mlx, game->player.front_paw.img);
+	if (game->player.front_paw_mirror.img)
+		mlx_destroy_image(game->mlx, game->player.front_paw_mirror.img);
 	free_player_idle_animation(game);
 	if (game->player.left.img)
 		mlx_destroy_image(game->mlx, game->player.left.img);
