@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 19:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/10 15:34:15 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 16:34:57 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,22 @@
  */
 t_sprite	*get_player_sprite(t_game *game)
 {
+	if (game->player.is_collecting)
+		return (&game->player.collect);
 	if (game->player.anim_counter >= IDLE_WAIT)
 		return (&game->player.back[game->player.frame]);
-	else if (game->player.current_dir == DIR_BACK)
+	if (game->player.current_dir == DIR_BACK)
 		return (&game->player.back[0]);
-	else if (game->player.current_dir == DIR_LEFT)
+	if (game->player.current_dir == DIR_LEFT)
 		return (&game->player.left);
-	else if (game->player.current_dir == DIR_RIGHT)
+	if (game->player.current_dir == DIR_RIGHT)
 		return (&game->player.left);
-	else
+	if (game->moves == 0)
 		return (&game->player.front);
+	if (game->player.walk_frame % 2 == 0)
+		return (&game->player.front_paw);
+	else
+		return (&game->player.front_paw_mirror);
 }
 
 /**
