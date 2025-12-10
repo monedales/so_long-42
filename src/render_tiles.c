@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 19:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/10 16:34:57 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 19:35:49 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_sprite	*get_player_sprite(t_game *game)
  * This is used for tiles that should appear in the middle of their cell
  * (walls, floors, etc.).
  * 
- * @param game Pointer to the game structure containing frame buffer and tile size.
+ * @param game Pointer to the game struct containing frame buffer and tile size.
  * @param x The x-coordinate (column) in the grid (not pixels).
  * @param y The y-coordinate (row) in the grid (not pixels).
  * @param img Pointer to the sprite to render.
@@ -82,7 +82,7 @@ void	render_tile(t_game *game, int x, int y, t_sprite *img)
  * roof/ceiling tiles that should hang from the top of the cell rather
  * than float in the middle, creating a proper side-view platformer effect.
  * 
- * @param game Pointer to the game structure containing frame buffer and tile size.
+ * @param game Pointer to the game struct containing frame buffer and tile size.
  * @param sprite Pointer to the sprite to render (typically a roof tile).
  * @param x The x-coordinate (column) in the grid (not pixels).
  * @param y The y-coordinate (row) in the grid (not pixels).
@@ -106,7 +106,7 @@ void	render_roof(t_game *game, t_sprite *sprite, int x, int y)
  * The sprite is drawn using draw_sprite_to_frame which respects the
  * magenta (#FF00FF) transparency color key.
  * 
- * @param game Pointer to the game structure containing frame buffer and tile size.
+ * @param game Pointer to the game struct containing frame buffer and tile size.
  * @param sprite Pointer to the sprite to render.
  * @param x The x-coordinate (column) in the grid (not pixels).
  * @param y The y-coordinate (row) in the grid (not pixels).
