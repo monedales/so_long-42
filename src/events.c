@@ -6,12 +6,32 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 14:16:35 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+/**
+ * @brief Validates if a move to the specified position is allowed.
+ *
+ * Checks multiple conditions to determine if the player can move to
+ * position (new_x, new_y):
+ * - Position is within map boundaries
+ * - Target tile is not a wall ('1')
+ * - Target tile is not a platform ('F')
+ * - Target tile is not ground/floor ('G')
+ * - Target tile is not a roof ('R')
+ *
+ * Empty spaces ('0'), collectibles ('C'), exits ('E'), and the player
+ * starting position ('P') are all valid movement targets.
+ * 
+ * @param game Pointer to the game structure containing the map.
+ * @param new_x The target x-coordinate (column).
+ * @param new_y The target y-coordinate (row).
+ *
+ * @return 1 if the move is valid, 0 if blocked or out of bounds.
+ */
 static int	is_valid_move(t_game *game, int new_x, int new_y)
 {
 	if (new_x < 0 || new_x >= game->map.width)
@@ -29,6 +49,26 @@ static int	is_valid_move(t_game *game, int new_x, int new_y)
 	return (1);
 }
 
+/**
+ * @brief Executes a player movement to a new position.
+ *
+ * Performs the following actions when moving the player:
+ * 1. Stores the current player position
+ * 2. Checks if the target tile is a collectible ('C') and increments
+ *    the collected counter if so
+ * 3. Checks win condition: if moving onto exit ('E') with all collectibles
+ *    collected, displays victory message and closes the game
+ * 4. Updates the map grid: restores exit tile if leaving it, otherwise
+ *    clears the old position
+ * 5. Updates player position in both the map grid and game structure
+ * 6. Increments the move counter
+ *
+ * This function assumes the move has already been validated.
+ * 
+ * @param game Pointer to the game structure.
+ * @param new_x The target x-coordinate (column) to move to.
+ * @param new_y The target y-coordinate (row) to move to.
+ */
 static void	move_player(t_game *game, int new_x, int new_y)
 {
 	int	old_x;
@@ -57,6 +97,24 @@ static void	move_player(t_game *game, int new_x, int new_y)
 	game->moves++;
 }
 
+/**
+ * @brief Processes keyboard input and updates movement coordinates.
+ *
+ * Translates keyboard input into movement direction and updates the
+ * player's animation direction. Supports both WASD and arrow keys:
+ * - W/Up Arrow: Move up (decrease y), face backwards
+ * - S/Down Arrow: Move down (increase y), face forward
+ * - A/Left Arrow: Move left (decrease x), face left
+ * - D/Right Arrow: Move right (increase x), face right
+ *
+ * The function modifies the new_x and new_y coordinates by reference
+ * and updates the player's current direction for sprite animation.
+ * 
+ * @param keycode The keyboard key code from MiniLibX event.
+ * @param new_x Pointer to the new x-coordinate to modify.
+ * @param new_y Pointer to the new y-coordinate to modify.
+ * @param game Pointer to the game structure to update player direction.
+ */
 static void	process_movement(int keycode, int *new_x, int *new_y, t_game *game)
 {
 	if (keycode == KEY_W || keycode == KEY_UP)
@@ -81,6 +139,28 @@ static void	process_movement(int keycode, int *new_x, int *new_y, t_game *game)
 	}
 }
 
+/**
+ * @brief Handles all keyboard input events for the game.
+ *
+ * Main keyboard event handler that processes player input and triggers
+ * appropriate game actions:
+ * - ESC key: Immediately closes the game
+ * - Movement keys (WASD/Arrows): Attempts to move the player
+ *
+ * For movement keys, the function:
+ * 1. Calculates the target position based on current position and key pressed
+ * 2. Updates the player's facing direction for sprite animation
+ * 3. Validates the move using collision detection
+ * 4. If valid, executes the move, prints move count, and re-renders the map
+ *
+ * This function is registered as a key hook in MiniLibX and is called
+ * automatically on every key press.
+ * 
+ * @param keycode The keyboard key code from the MiniLibX event system.
+ * @param game Pointer to the game structure containing all game state.
+ *
+ * @return Always returns 0 (required by MiniLibX hook system).
+ */
 int	handle_keypress(int keycode, t_game *game)
 {
 	int	new_x;
@@ -100,6 +180,21 @@ int	handle_keypress(int keycode, t_game *game)
 	return (0);
 }
 
+/**
+ * @brief Handles the window close event.
+ *
+ * Called when the user clicks the window's close button (X).
+ * Triggers complete game cleanup and program termination by calling
+ * close_game(), which frees all resources and exits gracefully.
+ *
+ * This function is registered as a hook for the window destroy event
+ * (event 17) in MiniLibX.
+ * 
+ * @param game Pointer to the game structure containing all resources.
+ *
+ * @return Always returns 0 (required by MiniLibX hook system, but the
+ *         function calls exit() so this value is never actually used).
+ */
 int	handle_close(t_game *game)
 {
 	close_game(game);

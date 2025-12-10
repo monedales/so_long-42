@@ -6,12 +6,28 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/26 18:04:20 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 14:41:28 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+/**
+ * @brief Loads a single XPM texture file into a sprite structure.
+ *
+ * Helper function that loads an XPM image file using MiniLibX and stores
+ * all necessary data in a t_sprite structure. The process:
+ * 1. Loads the XPM file and stores the image pointer and dimensions
+ * 2. If loading fails, prints an error message with the file path and exits
+ * 3. Retrieves the image data address and pixel format information
+ *
+ * The image data address is needed for direct pixel manipulation during
+ * rendering operations.
+ * 
+ * @param game Pointer to the game structure containing the MLX instance.
+ * @param img Pointer to the sprite structure to populate with loaded data.
+ * @param path The file path to the XPM image to load.
+ */
 static void	load_single_texture(t_game *game, t_sprite *img, char *path)
 {
 	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width,
@@ -26,6 +42,27 @@ static void	load_single_texture(t_game *game, t_sprite *img, char *path)
 			&img->endian);
 }
 
+/**
+ * @brief Loads all game textures from XPM files.
+ *
+ * Main texture loading function that loads all sprite assets needed for
+ * the game. This includes:
+ * - Environment tiles: wall, roof, floor, platform
+ * - Game objects: collectible (cheese), exit (spaceship)
+ * - Player animation sprites: front, back, left, collect
+ *
+ * Each texture is loaded using load_single_texture(), which handles error
+ * checking and data retrieval. If any texture fails to load, the program
+ * will exit with an error message indicating which file caused the problem.
+ *
+ * All sprites use the XPM format with magenta (#FF00FF) as the transparency
+ * color key for proper alpha blending during rendering.
+ *
+ * This function must be called after MLX initialization and before any
+ * rendering attempts.
+ * 
+ * @param game Pointer to the game structure where all textures will be stored.
+ */
 void	load_textures(t_game *game)
 {
 	load_single_texture(game, &game->wall, "assets/tiles/tile-wall-square.xpm");

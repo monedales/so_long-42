@@ -6,12 +6,25 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/26 16:48:04 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 14:39:50 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+/**
+ * @brief Renders the player sprite when standing on the exit.
+ *
+ * Special rendering case that handles layering when the player is standing
+ * on the same tile as the exit. Draws the exit sprite first, then the
+ * player sprite on top, ensuring the player is visible. This only triggers
+ * when both the player and exit positions match the current cell being
+ * rendered.
+ * 
+ * @param game Pointer to the game structure.
+ * @param x The x-coordinate of the current cell being rendered.
+ * @param y The y-coordinate of the current cell being rendered.
+ */
 static void	render_player_on_exit(t_game *game, int x, int y)
 {
 	t_sprite	*player_sprite;
@@ -25,6 +38,25 @@ static void	render_player_on_exit(t_game *game, int x, int y)
 	}
 }
 
+/**
+ * @brief Renders a single map cell based on its character.
+ *
+ * Determines what to draw at position (x, y) in the map grid based on
+ * the character at that position:
+ * - '1': Wall tile (centered)
+ * - 'R': Roof tile (top-aligned for side-view effect)
+ * - 'G': Ground/floor tile (centered)
+ * - 'F': Platform sprite (centered with transparency)
+ * - 'C': Collectible sprite (centered with transparency)
+ * - 'E': Exit sprite (centered with transparency)
+ * - 'P': Player sprite (centered with transparency, direction-aware)
+ *
+ * Also handles the special case where the player is on the exit.
+ * 
+ * @param game Pointer to the game structure.
+ * @param x The x-coordinate (column) in the map grid.
+ * @param y The y-coordinate (row) in the map grid.
+ */
 static void	render_cell(t_game *game, int x, int y)
 {
 	t_sprite	*player_sprite;
@@ -49,6 +81,16 @@ static void	render_cell(t_game *game, int x, int y)
 	render_player_on_exit(game, x, y);
 }
 
+/**
+ * @brief Renders a vertical gradient background.
+ *
+ * Fills the entire frame buffer with a smooth vertical gradient from
+ * white at the top to light gray at the bottom. The gradient provides
+ * a clean, atmospheric background for the game that doesn't interfere
+ * with sprite visibility. Uses direct pixel manipulation for efficiency.
+ * 
+ * @param game Pointer to the game structure containing the frame buffer.
+ */
 static void	render_gradient_background(t_game *game)
 {
 	int		x;
@@ -74,6 +116,19 @@ static void	render_gradient_background(t_game *game)
 	}
 }
 
+/**
+ * @brief Renders the move counter on screen.
+ *
+ * Displays the current move count in the top-left corner of the game
+ * window using MiniLibX's text rendering. Creates a black outline effect
+ * by drawing the text multiple times with slight offsets (creating shadow),
+ * then drawing the main white text on top. This ensures readability against
+ * any background color.
+ *
+ * Memory is properly managed by freeing the dynamically created strings.
+ * 
+ * @param game Pointer to the game structure containing move count and MLX data.
+ */
 static void	render_move_counter(t_game *game)
 {
 	char	*moves_str;
@@ -96,6 +151,23 @@ static void	render_move_counter(t_game *game)
 	free(counter_text);
 }
 
+/**
+ * @brief Main rendering function that draws the complete game state.
+ *
+ * Orchestrates the entire rendering pipeline in the correct order:
+ * 1. Renders gradient background to the frame buffer
+ * 2. Iterates through every map cell and renders its contents
+ * 3. Displays the completed frame buffer to the window
+ * 4. Overlays the move counter text on top
+ *
+ * This function uses double-buffering: all drawing is done to an off-screen
+ * frame buffer first, then the complete image is copied to the window in
+ * one operation. This prevents flickering and tearing.
+ *
+ * Called initially during game setup and after every player movement.
+ * 
+ * @param game Pointer to the game structure containing all rendering data.
+ */
 void	render_map(t_game *game)
 {
 	int	x;

@@ -6,12 +6,21 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 14:15:22 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+/**
+ * @brief Frees a dynamically allocated 2D map array.
+ *
+ * Iterates through each row of the map and frees it, then frees the
+ * array of pointers itself. Safely handles NULL maps by returning early.
+ * This is the standard cleanup function for map grids loaded from files.
+ * 
+ * @param map A NULL-terminated 2D array of strings to free.
+ */
 void	free_map(char **map)
 {
 	int	i;
@@ -27,6 +36,16 @@ void	free_map(char **map)
 	free(map);
 }
 
+/**
+ * @brief Frees a partially allocated visited array during pathfinding.
+ *
+ * Used for error handling during pathfinding when memory allocation fails
+ * partway through creating the visited map. Frees only the rows that were
+ * successfully allocated (from 0 to 'until'), then frees the array itself.
+ * 
+ * @param visited The partially allocated 2D array to free.
+ * @param until The number of rows that were successfully allocated.
+ */
 void	free_visited_partial(char **visited, int until)
 {
 	while (until > 0)
@@ -34,6 +53,15 @@ void	free_visited_partial(char **visited, int until)
 	free(visited);
 }
 
+/**
+ * @brief Frees a complete visited array used in pathfinding.
+ *
+ * Deallocates a fully allocated visited map that was used during the
+ * flood-fill pathfinding algorithm. Iterates through all rows and frees
+ * them, then frees the array of pointers. Safely handles NULL arrays.
+ * 
+ * @param visited A NULL-terminated 2D array of characters to free.
+ */
 void	free_visited(char **visited)
 {
 	int	i;
@@ -49,6 +77,20 @@ void	free_visited(char **visited)
 	free(visited);
 }
 
+/**
+ * @brief Destroys all loaded texture images.
+ *
+ * Helper function that frees all MiniLibX image resources loaded during
+ * game initialization. This includes:
+ * - Environment tiles (wall, roof, floor, platform)
+ * - Game objects (collectible, exit)
+ * - Player animation sprites (front, back, left, collect)
+ * - Frame buffer image
+ *
+ * Each texture is checked for NULL before destruction to prevent errors.
+ * 
+ * @param game Pointer to the game structure containing texture data.
+ */
 static void	free_textures(t_game *game)
 {
 	if (game->wall.img)
@@ -75,6 +117,25 @@ static void	free_textures(t_game *game)
 		mlx_destroy_image(game->mlx, game->frame.img);
 }
 
+/**
+ * @brief Performs complete game cleanup and exits the program.
+ *
+ * Deallocates all game resources in the proper order to prevent memory
+ * leaks and ensure clean program termination:
+ * 1. Destroys all texture images
+ * 2. Destroys the game window
+ * 3. Frees the map grid
+ * 4. Destroys the MLX display connection
+ * 5. Frees the MLX instance
+ * 6. Exits the program with success code
+ *
+ * This function is called when the player closes the window or presses ESC.
+ * 
+ * @param game Pointer to the game structure containing all resources.
+ *
+ * @return Always returns 0, but the function calls exit() so this value
+ *         is never actually returned.
+ */
 int	close_game(t_game *game)
 {
 	free_textures(game);

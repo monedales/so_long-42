@@ -6,12 +6,23 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/09 22:25:57 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+/**
+ * @brief Initializes the game window and frame buffer.
+ *
+ * Creates the MiniLibX window with dimensions based on the map size and
+ * a fixed tile size of 64x64 pixels. Also initializes the frame buffer
+ * image which is used for off-screen rendering before displaying to the
+ * window. This double-buffering approach prevents flickering during
+ * game updates.
+ * 
+ * @param game Pointer to the game structure containing map and MLX data.
+ */
 void	init_window(t_game *game)
 {
 	int	win_width;
@@ -31,6 +42,17 @@ void	init_window(t_game *game)
 	game->frame.height = win_height;
 }
 
+/**
+ * @brief Calculates and stores the dimensions of the map.
+ *
+ * Parses the map grid to determine its width (number of columns) and
+ * height (number of rows). The width is determined from the length of
+ * the first row, and the height is counted by iterating through all rows.
+ * These dimensions are stored in the game structure for later use in
+ * rendering and collision detection.
+ * 
+ * @param game Pointer to the game structure containing the map grid.
+ */
 void	parse_map_dimensions(t_game *game)
 {
 	game->map.height = 0;
@@ -39,6 +61,19 @@ void	parse_map_dimensions(t_game *game)
 	game->map.width = ft_strlen(game->map.grid[0]);
 }
 
+/**
+ * @brief Parses a single tile and updates game state accordingly.
+ *
+ * Helper function that checks the character at position (x, y) in the
+ * map and updates the game structure based on the tile type:
+ * - 'P': Stores the player's starting position
+ * - 'E': Stores the exit position
+ * - 'C': Increments the collectibles counter
+ * 
+ * @param game Pointer to the game structure to update.
+ * @param x The x-coordinate (column) of the tile to parse.
+ * @param y The y-coordinate (row) of the tile to parse.
+ */
 static void	parse_tile(t_game *game, int x, int y)
 {
 	if (game->map.grid[y][x] == 'P')
@@ -55,6 +90,21 @@ static void	parse_tile(t_game *game, int x, int y)
 		game->map.collectibles++;
 }
 
+/**
+ * @brief Parses the map and initializes game state variables.
+ *
+ * Iterates through the entire map grid to:
+ * - Count the total number of collectibles
+ * - Find and store the player starting position
+ * - Find and store the exit position
+ * - Initialize game counters (moves, collected items)
+ * - Initialize player animation state (direction and frame)
+ *
+ * This function must be called after parse_map_dimensions() and before
+ * rendering begins.
+ * 
+ * @param game Pointer to the game structure to initialize.
+ */
 void	parse_map_data(t_game *game)
 {
 	int	x;
@@ -78,6 +128,24 @@ void	parse_map_data(t_game *game)
 	}
 }
 
+/**
+ * @brief Main initialization function for the game.
+ *
+ * Performs complete game initialization in the following order:
+ * 1. Initializes the MiniLibX connection
+ * 2. Parses map dimensions (width and height)
+ * 3. Parses map data (player position, exit, collectibles count)
+ * 4. Creates the game window and frame buffer
+ * 5. Loads all texture sprites from files
+ * 6. Renders the initial game state
+ * 7. Sets up event hooks for window closing and keyboard input
+ *
+ * After this function completes, the game is ready to enter the
+ * main event loop (mlx_loop).
+ * 
+ * @param game Pointer to the game structure to initialize. The map grid
+ *             must already be loaded before calling this function.
+ */
 void	init_game(t_game *game)
 {
 	game->mlx = mlx_init();
