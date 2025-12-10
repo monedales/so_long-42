@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 14:15:22 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 15:38:53 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,48 @@ void	free_visited(char **visited)
 }
 
 /**
+ * @brief Frees all frames of the player idle animation.
+ *
+ * Helper function that destroys all 5 frames of the idle animation.
+ * This function was separated to make it easier to manage multiple
+ * animation sequences in the future.
+ * 
+ * @param game Pointer to the game structure.
+ */
+static void	free_player_idle_animation(t_game *game)
+{
+	int	i;
+
+	i = 0;
+	while (i < IDLE_FRAMES)
+	{
+		if (game->player.back[i].img)
+			mlx_destroy_image(game->mlx, game->player.back[i].img);
+		i++;
+	}
+}
+
+/**
+ * @brief Frees all frames of the cheese animation.
+ *
+ * Helper function that destroys all 5 frames of the cheese animation.
+ * 
+ * @param game Pointer to the game structure.
+ */
+static void	free_cheese_animation(t_game *game)
+{
+	int	i;
+
+	i = 0;
+	while (i < 5)
+	{
+		if (game->cheese[i].img)
+			mlx_destroy_image(game->mlx, game->cheese[i].img);
+		i++;
+	}
+}
+
+/**
  * @brief Destroys all loaded texture images.
  *
  * Helper function that frees all MiniLibX image resources loaded during
@@ -101,14 +143,12 @@ static void	free_textures(t_game *game)
 		mlx_destroy_image(game->mlx, game->floor.img);
 	if (game->platform.img)
 		mlx_destroy_image(game->mlx, game->platform.img);
-	if (game->collectible.img)
-		mlx_destroy_image(game->mlx, game->collectible.img);
+	free_cheese_animation(game);
 	if (game->exit.img)
 		mlx_destroy_image(game->mlx, game->exit.img);
 	if (game->player.front.img)
 		mlx_destroy_image(game->mlx, game->player.front.img);
-	if (game->player.back.img)
-		mlx_destroy_image(game->mlx, game->player.back.img);
+	free_player_idle_animation(game);
 	if (game->player.left.img)
 		mlx_destroy_image(game->mlx, game->player.left.img);
 	if (game->player.collect.img)

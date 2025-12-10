@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/11/26 17:00:38 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 15:40:26 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@
 # define KEY_DOWN 65364
 # define KEY_ESC 65307
 # define TRANSPARENT_COLOR 0xFF00FF
+# define ANIM_DELAY 5000
+# define IDLE_WAIT 300000
+# define CHEESE_DELAY 50000
+# define IDLE_FRAMES 5
 
 # include "../libs/libft/libft.h"
 # include "../libs/minilibix-linux/mlx.h"
@@ -83,11 +87,12 @@ typedef struct s_map
 typedef struct s_player_anim
 {
 	t_sprite	front;
-	t_sprite	back;
+	t_sprite	back[IDLE_FRAMES];
 	t_sprite	left;
 	t_sprite	collect;
 	t_direction	current_dir;
 	int			frame;
+	int			anim_counter;
 }				t_player_anim;
 
 typedef struct s_game
@@ -99,12 +104,14 @@ typedef struct s_game
 	t_sprite		roof;
 	t_sprite		floor;
 	t_sprite		platform;
-	t_sprite		collectible;
+	t_sprite		cheese[5];
 	t_sprite		exit;
 	t_sprite		frame;
 	t_player_anim	player;
 	int				moves;
 	int				tile_size;
+	int				cheese_frame;
+	int				cheese_counter;
 }				t_game;
 
 typedef struct s_flood_params
@@ -159,5 +166,6 @@ void			free_visited_partial(char **visited, int until);
 int				handle_keypress(int keycode, t_game *game);
 int				handle_close(t_game *game);
 int				close_game(t_game *game);
+int				update_animation(void *param);
 
 #endif

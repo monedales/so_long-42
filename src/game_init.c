@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/09 22:25:57 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 15:34:15 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,9 @@ void	parse_map_data(t_game *game)
 	game->moves = 0;
 	game->player.current_dir = DIR_FRONT;
 	game->player.frame = 0;
+	game->player.anim_counter = 0;
+	game->cheese_frame = 0;
+	game->cheese_counter = 0;
 	y = 0;
 	while (y < game->map.height)
 	{
@@ -158,4 +161,5 @@ void	init_game(t_game *game)
 	render_map(game);
 	mlx_hook(game->win, 17, 0, handle_close, game);
 	mlx_key_hook(game->win, handle_keypress, game);
+	mlx_loop_hook(game->mlx, update_animation, game);
 }

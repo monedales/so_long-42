@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 14:41:28 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 15:40:26 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,54 @@ static void	load_single_texture(t_game *game, t_sprite *img, char *path)
 }
 
 /**
+ * @brief Loads idle animation frames for the player.
+ *
+ * Helper function that loads all frames of the idle animation (tail wagging).
+ * Loads 5 frames from louis-back1.xpm through louis-back5.xpm into the
+ * player.back array.
+ *
+ * This function was separated to make it easier to add more animations
+ * in the future (walking, collecting, etc.).
+ * 
+ * @param game Pointer to the game structure.
+ */
+static void	load_player_idle_animation(t_game *game)
+{
+	load_single_texture(game, &game->player.back[0],
+		"assets/sprites-louis/louis-back1.xpm");
+	load_single_texture(game, &game->player.back[1],
+		"assets/sprites-louis/louis-back2.xpm");
+	load_single_texture(game, &game->player.back[2],
+		"assets/sprites-louis/louis-back3.xpm");
+	load_single_texture(game, &game->player.back[3],
+		"assets/sprites-louis/louis-back4.xpm");
+	load_single_texture(game, &game->player.back[4],
+		"assets/sprites-louis/louis-back5.xpm");
+}
+
+/**
+ * @brief Loads cheese animation frames.
+ *
+ * Helper function that loads all frames of the cheese animation.
+ * Loads 5 different cheese types: blue cheese, brie, cheddar, gouda, parmesan.
+ *
+ * @param game Pointer to the game structure.
+ */
+static void	load_cheese_animation(t_game *game)
+{
+	load_single_texture(game, &game->cheese[0],
+		"assets/cheese/blue-cheese.xpm");
+	load_single_texture(game, &game->cheese[1],
+		"assets/cheese/brie.xpm");
+	load_single_texture(game, &game->cheese[2],
+		"assets/cheese/cheddar.xpm");
+	load_single_texture(game, &game->cheese[3],
+		"assets/cheese/gouda.xpm");
+	load_single_texture(game, &game->cheese[4],
+		"assets/cheese/parmesan.xpm");
+}
+
+/**
  * @brief Loads all game textures from XPM files.
  *
  * Main texture loading function that loads all sprite assets needed for
@@ -70,13 +118,11 @@ void	load_textures(t_game *game)
 	load_single_texture(game, &game->floor, "assets/tiles/tile_floor.xpm");
 	load_single_texture(game, &game->platform,
 		"assets/tiles/platform.xpm");
-	load_single_texture(game, &game->collectible,
-		"assets/cheese/blue-cheese.xpm");
+	load_cheese_animation(game);
 	load_single_texture(game, &game->exit, "assets/exit/exit-spaceship-80.xpm");
 	load_single_texture(game, &game->player.front,
 		"assets/sprites-louis/louis-front-grumpy.xpm");
-	load_single_texture(game, &game->player.back,
-		"assets/sprites-louis/louis-back1.xpm");
+	load_player_idle_animation(game);
 	load_single_texture(game, &game->player.left,
 		"assets/sprites-louis/louis-side-walk.xpm");
 	load_single_texture(game, &game->player.collect,
