@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 19:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/10 14:35:45 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 15:34:15 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@
  * @brief Returns the appropriate player sprite based on current direction.
  *
  * Selects which player animation sprite to display based on the player's
- * current facing direction. The direction is updated during movement:
+ * current facing direction. When the player has been idle for IDLE_WAIT
+ * iterations, the idle animation (tail wagging) plays regardless of direction.
+ * Otherwise shows directional sprites:
  * - DIR_BACK: Player facing up/backwards
  * - DIR_LEFT: Player facing left
  * - DIR_RIGHT: Player facing right (currently uses same sprite as left)
@@ -28,8 +30,10 @@
  */
 t_sprite	*get_player_sprite(t_game *game)
 {
-	if (game->player.current_dir == DIR_BACK)
-		return (&game->player.back);
+	if (game->player.anim_counter >= IDLE_WAIT)
+		return (&game->player.back[game->player.frame]);
+	else if (game->player.current_dir == DIR_BACK)
+		return (&game->player.back[0]);
 	else if (game->player.current_dir == DIR_LEFT)
 		return (&game->player.left);
 	else if (game->player.current_dir == DIR_RIGHT)

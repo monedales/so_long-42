@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 14:39:50 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 15:34:15 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void	render_cell(t_game *game, int x, int y)
 	if (game->map.grid[y][x] == 'F')
 		render_sprite_centered(game, &game->platform, x, y);
 	if (game->map.grid[y][x] == 'C')
-		render_sprite_centered(game, &game->collectible, x, y);
+		render_sprite_centered(game, &game->cheese[game->cheese_frame], x, y);
 	if (game->map.grid[y][x] == 'E')
 		render_sprite_centered(game, &game->exit, x, y);
 	if (game->map.grid[y][x] == 'P')

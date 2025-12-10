@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 14:16:35 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 15:38:53 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,11 @@ int	handle_keypress(int keycode, t_game *game)
 	if (keycode == KEY_ESC)
 		close_game(game);
 	process_movement(keycode, &new_x, &new_y, game);
+	if (new_x != game->map.player_pos.x || new_y != game->map.player_pos.y)
+	{
+		game->player.anim_counter = 0;
+		game->player.frame = 0;
+	}
 	if (is_valid_move(game, new_x, new_y))
 	{
 		move_player(game, new_x, new_y);
@@ -198,5 +203,58 @@ int	handle_keypress(int keycode, t_game *game)
 int	handle_close(t_game *game)
 {
 	close_game(game);
+	return (0);
+}
+
+/**
+ * @brief Updates the player's animation frame for idle animation.
+ *
+ * This function is called repeatedly by the mlx_loop_hook to animate the
+ * player when they are idle (not moving). It cycles through 5 animation
+ * frames (back[0] to back[4]) to create a tail-wagging effect.
+ * 
+ * The animation uses a frame counter to control timing:
+ * - Increments anim_counter every loop iteration
+ * - Only starts animating after IDLE_WAIT iterations (~5 seconds of inactivity)
+ * - Updates the animation frame every ANIM_DELAY iterations
+ * - Cycles through frames 0-4 using modulo operation
+ * - Triggers a re-render when frame changes
+ * 
+ * When the player is moving, the directional sprites (front/left/right)
+ * are used instead of the idle animation frames.
+ * 
+ * @param game Pointer to the game structure containing animation state.
+ *
+ * @return Always returns 0 (required by mlx_loop_hook).
+ */
+int	update_animation(void *param)
+{
+	t_game			*game;
+	static int		counter = 0;
+	int				old_frame;
+	int				old_cheese;
+
+	game = (t_game *)param;
+	game->player.anim_counter++;
+	game->cheese_counter++;
+	if (game->cheese_counter >= CHEESE_DELAY)
+	{
+		game->cheese_counter = 0;
+		old_cheese = game->cheese_frame;
+		game->cheese_frame = (game->cheese_frame + 1) % 5;
+		if (old_cheese != game->cheese_frame)
+			render_map(game);
+	}
+	if (game->player.anim_counter < IDLE_WAIT)
+		return (0);
+	counter++;
+	if (counter >= ANIM_DELAY)
+	{
+		counter = 0;
+		old_frame = game->player.frame;
+		game->player.frame = (game->player.frame + 1) % IDLE_FRAMES;
+		if (old_frame != game->player.frame)
+			render_map(game);
+	}
 	return (0);
 }
