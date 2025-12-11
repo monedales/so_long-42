@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 16:34:57 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 16:28:04 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,9 @@ typedef struct s_player_anim
 	t_sprite	front_paw_mirror;
 	t_sprite	back[IDLE_FRAMES];
 	t_sprite	left;
+	t_sprite	left_paw;
+	t_sprite	right;
+	t_sprite	right_paw;
 	t_sprite	collect;
 	t_direction	current_dir;
 	int			frame;

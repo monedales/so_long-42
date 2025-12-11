@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 16:38:23 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 16:40:14 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,48 @@ static void	load_single_texture(t_game *game, t_sprite *img, char *path)
 	img->addr = mlx_get_data_addr(img->img, &img->bpp, &img->line_len,
 			&img->endian);
 }
+
+/**
+ * @brief Creates a horizontally flipped version of a sprite.
+ * 
+ * Alternative method for mirroring sprites programmatically.
+ * Currently not used - sprites are mirrored using ImageMagick convert:
+ * convert sprite.xpm -flop sprite-mirror.xpm
+ * 
+ * @param game Pointer to the game structure.
+ * @param dest Destination sprite to store the flipped image.
+ * @param src Source sprite to flip.
+ */
+/*
+static void	flip_sprite_horizontal(t_game *game, t_sprite *dest, t_sprite *src)
+{
+	int		x;
+	int		y;
+	int		*src_data;
+	int		*dest_data;
+
+	dest->img = mlx_new_image(game->mlx, src->width, src->height);
+	dest->addr = mlx_get_data_addr(dest->img, &dest->bpp,
+			&dest->line_len, &dest->endian);
+	dest->width = src->width;
+	dest->height = src->height;
+	y = 0;
+	while (y < src->height)
+	{
+		x = 0;
+		while (x < src->width)
+		{
+			src_data = (int *)(src->addr + (y * src->line_len
+						+ x * (src->bpp / 8)));
+			dest_data = (int *)(dest->addr + (y * dest->line_len
+						+ (src->width - 1 - x) * (dest->bpp / 8)));
+			*dest_data = *src_data;
+			x++;
+		}
+		y++;
+	}
+}
+*/
 
 /**
  * @brief Loads idle animation frames for the player.
@@ -129,6 +171,12 @@ void	load_textures(t_game *game)
 	load_player_idle_animation(game);
 	load_single_texture(game, &game->player.left,
 		"assets/sprites-louis/louis-walk-left.xpm");
+	load_single_texture(game, &game->player.left_paw,
+		"assets/sprites-louis/louis-walk-left2.xpm");
+	load_single_texture(game, &game->player.right,
+		"assets/sprites-louis/louis-walk-right.xpm");
+	load_single_texture(game, &game->player.right_paw,
+		"assets/sprites-louis/louis-walk-right2.xpm");
 	load_single_texture(game, &game->player.collect,
 		"assets/sprites-louis/louis-collect.xpm");
 }
