@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 17:46:06 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,16 @@ typedef struct s_player_anim
 	int			walk_frame;
 }				t_player_anim;
 
+typedef struct s_camera
+{
+	int			x;
+	int			y;
+	int			width;
+	int			height;
+	int			max_x;
+	int			max_y;
+}				t_camera;
+
 typedef struct s_game
 {
 	void			*mlx;
@@ -117,6 +127,7 @@ typedef struct s_game
 	t_sprite		exit;
 	t_sprite		frame;
 	t_player_anim	player;
+	t_camera		camera;
 	int				moves;
 	int				tile_size;
 	int				cheese_frame;
@@ -163,6 +174,10 @@ void			draw_sprite_opaque(t_sprite *frame, t_sprite *sprite,
 					int px, int py);
 void			draw_sprite_to_frame(t_sprite *frame, t_sprite *sprite,
 					int px, int py);
+
+/**** Camera ****/
+void			init_camera(t_game *game);
+void			update_camera(t_game *game);
 
 /**** Utils ****/
 // char		**ft_append_line(char **map, char *line, int count);
