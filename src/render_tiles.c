@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 19:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 17:46:06 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,12 +78,14 @@ void	render_tile(t_game *game, int x, int y, t_sprite *img)
 {
 	int	offset_x;
 	int	offset_y;
+	int	screen_x;
+	int	screen_y;
 
 	offset_x = (game->tile_size - img->width) / 2;
 	offset_y = (game->tile_size - img->height) / 2;
-	draw_sprite_to_frame(&game->frame, img,
-		x * game->tile_size + offset_x,
-		y * game->tile_size + offset_y);
+	screen_x = (x - game->camera.x) * game->tile_size + offset_x;
+	screen_y = (y - game->camera.y) * game->tile_size + offset_y;
+	draw_sprite_to_frame(&game->frame, img, screen_x, screen_y);
 }
 
 /**
@@ -102,11 +104,13 @@ void	render_tile(t_game *game, int x, int y, t_sprite *img)
 void	render_roof(t_game *game, t_sprite *sprite, int x, int y)
 {
 	int	offset_x;
+	int	screen_x;
+	int	screen_y;
 
 	offset_x = (game->tile_size - sprite->width) / 2;
-	draw_sprite_to_frame(&game->frame, sprite,
-		x * game->tile_size + offset_x,
-		y * game->tile_size);
+	screen_x = (x - game->camera.x) * game->tile_size + offset_x;
+	screen_y = (y - game->camera.y) * game->tile_size;
+	draw_sprite_to_frame(&game->frame, sprite, screen_x, screen_y);
 }
 
 /**
@@ -127,10 +131,12 @@ void	render_sprite_centered(t_game *game, t_sprite *sprite, int x, int y)
 {
 	int	offset_x;
 	int	offset_y;
+	int	screen_x;
+	int	screen_y;
 
 	offset_x = (game->tile_size - sprite->width) / 2;
 	offset_y = (game->tile_size - sprite->height) / 2;
-	draw_sprite_to_frame(&game->frame, sprite,
-		x * game->tile_size + offset_x,
-		y * game->tile_size + offset_y);
+	screen_x = (x - game->camera.x) * game->tile_size + offset_x;
+	screen_y = (y - game->camera.y) * game->tile_size + offset_y;
+	draw_sprite_to_frame(&game->frame, sprite, screen_x, screen_y);
 }

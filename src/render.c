@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 15:34:15 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 17:46:06 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,11 +174,14 @@ void	render_map(t_game *game)
 	int	y;
 
 	render_gradient_background(game);
-	y = 0;
-	while (y < game->map.height)
+	update_camera(game);
+	y = game->camera.y;
+	while (y < game->camera.y + game->camera.height
+		&& y < game->map.height)
 	{
-		x = 0;
-		while (x < game->map.width)
+		x = game->camera.x;
+		while (x < game->camera.x + game->camera.width
+			&& x < game->map.width)
 		{
 			render_cell(game, x, y);
 			x++;
