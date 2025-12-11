@@ -6,11 +6,29 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 19:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/11 16:33:33 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
+
+static t_sprite	*get_lateral_sprite(t_game *game, int is_right)
+{
+	if (is_right)
+	{
+		if (game->player.walk_frame % 2 == 0)
+			return (&game->player.right);
+		else
+			return (&game->player.right_paw);
+	}
+	else
+	{
+		if (game->player.walk_frame % 2 == 0)
+			return (&game->player.left);
+		else
+			return (&game->player.left_paw);
+	}
+}
 
 /**
  * @brief Returns the appropriate player sprite based on current direction.
@@ -18,11 +36,6 @@
  * Selects which player animation sprite to display based on the player's
  * current facing direction. When the player has been idle for IDLE_WAIT
  * iterations, the idle animation (tail wagging) plays regardless of direction.
- * Otherwise shows directional sprites:
- * - DIR_BACK: Player facing up/backwards
- * - DIR_LEFT: Player facing left
- * - DIR_RIGHT: Player facing right (currently uses same sprite as left)
- * - DIR_FRONT (default): Player facing down/forward
  * 
  * @param game Pointer to the game structure containing player animation data.
  *
@@ -37,25 +50,14 @@ t_sprite	*get_player_sprite(t_game *game)
 	if (game->player.current_dir == DIR_BACK)
 		return (&game->player.back[game->player.frame]);
 	if (game->player.current_dir == DIR_LEFT)
-	{
-		if (game->player.walk_frame % 2 == 0)
-			return (&game->player.left);
-		else
-			return (&game->player.left_paw);
-	}
+		return (get_lateral_sprite(game, 0));
 	if (game->player.current_dir == DIR_RIGHT)
-	{
-		if (game->player.walk_frame % 2 == 0)
-			return (&game->player.right);
-		else
-			return (&game->player.right_paw);
-	}
+		return (get_lateral_sprite(game, 1));
 	if (game->moves == 0)
 		return (&game->player.front);
 	if (game->player.walk_frame % 2 == 0)
 		return (&game->player.front_paw);
-	else
-		return (&game->player.front_paw_mirror);
+	return (&game->player.front_paw_mirror);
 }
 
 /**
