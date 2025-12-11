@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 16:03:35 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 18:04:38 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,20 @@ void	init_window(t_game *game)
 {
 	int	win_width;
 	int	win_height;
+	int	map_pixel_width;
+	int	map_pixel_height;
 
 	game->tile_size = 64;
-	win_width = game->map.width * game->tile_size;
-	win_height = game->map.height * game->tile_size;
+	map_pixel_width = game->map.width * game->tile_size;
+	map_pixel_height = game->map.height * game->tile_size;
+	if (map_pixel_width > 800)
+		win_width = 800;
+	else
+		win_width = map_pixel_width;
+	if (map_pixel_height > 600)
+		win_height = 600;
+	else
+		win_height = map_pixel_height;
 	game->win = mlx_new_window(game->mlx, win_width, win_height,
 			"So Long and thanx for all the cheese");
 	if (!game->win)
@@ -160,6 +170,7 @@ void	init_game(t_game *game)
 	parse_map_dimensions(game);
 	parse_map_data(game);
 	init_window(game);
+	init_camera(game);
 	load_textures(game);
 	render_map(game);
 	mlx_hook(game->win, 17, 0, handle_close, game);
