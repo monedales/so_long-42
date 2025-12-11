@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/11 16:28:04 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,16 +165,18 @@ void			draw_sprite_to_frame(t_sprite *frame, t_sprite *sprite,
 					int px, int py);
 
 /**** Utils ****/
-// char			**ft_append_line(char **map, char *line, int count);
+// char		**ft_append_line(char **map, char *line, int count);
 int				handle_error(t_error error);
 void			free_map(char **map);
 void			free_visited(char **visited);
 void			free_visited_partial(char **visited, int until);
+void			free_textures(t_game *game);
 
 /**** Event Handlers ****/
 int				handle_keypress(int keycode, t_game *game);
 int				handle_close(t_game *game);
 int				close_game(t_game *game);
 int				update_animation(void *param);
+void			update_back_anim(t_game *game, int keycode);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 20:02:34 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,18 +158,8 @@ static void	process_movement(int keycode, int *new_x, int *new_y, t_game *game)
  * @brief Handles all keyboard input events for the game.
  *
  * Main keyboard event handler that processes player input and triggers
- * appropriate game actions:
- * - ESC key: Immediately closes the game
- * - Movement keys (WASD/Arrows): Attempts to move the player
- *
- * For movement keys, the function:
- * 1. Calculates the target position based on current position and key pressed
- * 2. Updates the player's facing direction for sprite animation
- * 3. Validates the move using collision detection
- * 4. If valid, executes the move, prints move count, and re-renders the map
- *
- * This function is registered as a key hook in MiniLibX and is called
- * automatically on every key press.
+ * appropriate game actions. Processes ESC key to close game and movement
+ * keys (WASD/Arrows) to move the player with collision detection.
  * 
  * @param keycode The keyboard key code from the MiniLibX event system.
  * @param game Pointer to the game structure containing all game state.
@@ -187,17 +177,7 @@ int	handle_keypress(int keycode, t_game *game)
 		close_game(game);
 	process_movement(keycode, &new_x, &new_y, game);
 	if (new_x != game->map.player_pos.x || new_y != game->map.player_pos.y)
-	{
-		game->player.anim_counter = 0;
-		game->player.frame = 0;
-		if (keycode == KEY_W || keycode == KEY_UP)
-		{
-			if (game->player.walk_frame % 2 == 0)
-				game->player.frame = 2;
-			else
-				game->player.frame = 4;
-		}
-	}
+		update_back_anim(game, keycode);
 	if (is_valid_move(game, new_x, new_y))
 	{
 		move_player(game, new_x, new_y);

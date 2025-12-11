@@ -6,11 +6,24 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/10 20:00:16 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
+
+void	update_back_anim(t_game *game, int keycode)
+{
+	game->player.anim_counter = 0;
+	game->player.frame = 0;
+	if (keycode == KEY_W || keycode == KEY_UP)
+	{
+		if (game->player.walk_frame % 2 == 0)
+			game->player.frame = 2;
+		else
+			game->player.frame = 4;
+	}
+}
 
 /**
  * @brief Handles the window close event.
