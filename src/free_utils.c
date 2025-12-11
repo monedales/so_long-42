@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/11 16:33:33 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,96 +75,6 @@ void	free_visited(char **visited)
 		i++;
 	}
 	free(visited);
-}
-
-/**
- * @brief Frees all frames of the player idle animation.
- *
- * Helper function that destroys all 5 frames of the idle animation.
- * This function was separated to make it easier to manage multiple
- * animation sequences in the future.
- * 
- * @param game Pointer to the game structure.
- */
-static void	free_player_idle_animation(t_game *game)
-{
-	int	i;
-
-	i = 0;
-	while (i < IDLE_FRAMES)
-	{
-		if (game->player.back[i].img)
-			mlx_destroy_image(game->mlx, game->player.back[i].img);
-		i++;
-	}
-}
-
-/**
- * @brief Frees all frames of the cheese animation.
- *
- * Helper function that destroys all 5 frames of the cheese animation.
- * 
- * @param game Pointer to the game structure.
- */
-static void	free_cheese_animation(t_game *game)
-{
-	int	i;
-
-	i = 0;
-	while (i < 5)
-	{
-		if (game->cheese[i].img)
-			mlx_destroy_image(game->mlx, game->cheese[i].img);
-		i++;
-	}
-}
-
-/**
- * @brief Destroys all loaded texture images.
- *
- * Helper function that frees all MiniLibX image resources loaded during
- * game initialization. This includes:
- * - Environment tiles (wall, roof, floor, platform)
- * - Game objects (collectible, exit)
- * - Player animation sprites (front, back, left, collect)
- * - Frame buffer image
- *
- * Each texture is checked for NULL before destruction to prevent errors.
- * 
- * @param game Pointer to the game structure containing texture data.
- */
-static void	free_textures(t_game *game)
-{
-	if (game->wall.img)
-		mlx_destroy_image(game->mlx, game->wall.img);
-	if (game->roof.img)
-		mlx_destroy_image(game->mlx, game->roof.img);
-	if (game->floor.img)
-		mlx_destroy_image(game->mlx, game->floor.img);
-	if (game->platform.img)
-		mlx_destroy_image(game->mlx, game->platform.img);
-	free_cheese_animation(game);
-	if (game->exit.img)
-		mlx_destroy_image(game->mlx, game->exit.img);
-	if (game->player.front.img)
-		mlx_destroy_image(game->mlx, game->player.front.img);
-	if (game->player.front_paw.img)
-		mlx_destroy_image(game->mlx, game->player.front_paw.img);
-	if (game->player.front_paw_mirror.img)
-		mlx_destroy_image(game->mlx, game->player.front_paw_mirror.img);
-	free_player_idle_animation(game);
-	if (game->player.left.img)
-		mlx_destroy_image(game->mlx, game->player.left.img);
-	if (game->player.left_paw.img)
-		mlx_destroy_image(game->mlx, game->player.left_paw.img);
-	if (game->player.right.img)
-		mlx_destroy_image(game->mlx, game->player.right.img);
-	if (game->player.right_paw.img)
-		mlx_destroy_image(game->mlx, game->player.right_paw.img);
-	if (game->player.collect.img)
-		mlx_destroy_image(game->mlx, game->player.collect.img);
-	if (game->frame.img)
-		mlx_destroy_image(game->mlx, game->frame.img);
 }
 
 /**
