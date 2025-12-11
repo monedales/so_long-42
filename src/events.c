@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 19:51:15 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/10 20:02:34 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,13 @@ int	handle_keypress(int keycode, t_game *game)
 	{
 		game->player.anim_counter = 0;
 		game->player.frame = 0;
+		if (keycode == KEY_W || keycode == KEY_UP)
+		{
+			if (game->player.walk_frame % 2 == 0)
+				game->player.frame = 2;
+			else
+				game->player.frame = 4;
+		}
 	}
 	if (is_valid_move(game, new_x, new_y))
 	{
