@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/12 13:02:11 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,17 @@ static void	move_player(t_game *game, int new_x, int new_y)
 	if (game->map.grid[new_y][new_x] == 'E'
 		&& game->map.collected == game->map.collectibles)
 	{
-		ft_printf("🎉 WEERK! You won! Moves: %d\n", game->moves + 1);
-		close_game(game);
+		update_map_grid(game, new_x, new_y);
+		game->map.player_pos.x = new_x;
+		game->map.player_pos.y = new_y;
+		game->moves++;
+		trigger_victory_scene(game);
+		return ;
+	}
+	else if (game->map.grid[new_y][new_x] == 'E')
+	{
+		trigger_error_scene(game);
+		return ;
 	}
 	update_map_grid(game, new_x, new_y);
 	game->map.player_pos.x = new_x;
@@ -171,10 +180,23 @@ int	handle_keypress(int keycode, t_game *game)
 	int	new_x;
 	int	new_y;
 
-	new_x = game->map.player_pos.x;
-	new_y = game->map.player_pos.y;
 	if (keycode == KEY_ESC)
 		close_game(game);
+	if (game->scene && keycode == KEY_ENTER && game->scene_ready
+		&& game->scene_frame_delay == 0)
+	{
+		game->scene_id++;
+		handle_scenes(game);
+		return (0);
+	}
+	if (game->scene)
+	{
+		if (game->scene_frame_delay == 0)
+			game->scene_ready = 1;
+		return (0);
+	}
+	new_x = game->map.player_pos.x;
+	new_y = game->map.player_pos.y;
 	process_movement(keycode, &new_x, &new_y, game);
 	if (new_x != game->map.player_pos.x || new_y != game->map.player_pos.y)
 		update_back_anim(game, keycode);

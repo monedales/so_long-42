@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/11 17:46:06 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/12 13:02:11 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define KEY_UP 65362
 # define KEY_DOWN 65364
 # define KEY_ESC 65307
+# define KEY_ENTER 65293
 # define TRANSPARENT_COLOR 0xFF00FF
 # define ANIM_DELAY 5000
 # define IDLE_WAIT 300000
@@ -132,6 +133,10 @@ typedef struct s_game
 	int				tile_size;
 	int				cheese_frame;
 	int				cheese_counter;
+	int				scene;
+	int				scene_id;
+	int				scene_ready;
+	int				scene_frame_delay;
 }				t_game;
 
 typedef struct s_flood_params
@@ -193,5 +198,11 @@ int				handle_close(t_game *game);
 int				close_game(t_game *game);
 int				update_animation(void *param);
 void			update_back_anim(t_game *game, int keycode);
+
+/**** Cutscenes ****/
+void			handle_scenes(t_game *game);
+void			show_scene(t_game *game, char *file_path);
+void			trigger_error_scene(t_game *game);
+void			trigger_victory_scene(t_game *game);
 
 #endif

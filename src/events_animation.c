@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/11 17:13:49 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/12 13:02:11 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ int	update_animation(void *param)
 	static int		counter = 0;
 
 	game = (t_game *)param;
+	if (game->scene && game->scene_frame_delay > 0)
+		game->scene_frame_delay--;
 	game->player.anim_counter++;
 	update_cheese_anim(game);
 	update_player_anim(game, &counter);
