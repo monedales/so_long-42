@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/12 13:02:11 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/12 14:52:32 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # include "../libs/minilibix-linux/mlx.h"
 # include "../libs/minilibix-linux/mlx_int.h"
 # include <stdio.h>
+# include <sys/time.h>
 
 typedef enum e_direction
 {
@@ -135,8 +136,7 @@ typedef struct s_game
 	int				cheese_counter;
 	int				scene;
 	int				scene_id;
-	int				scene_ready;
-	int				scene_frame_delay;
+	double			scene_start_time;
 }				t_game;
 
 typedef struct s_flood_params
@@ -202,7 +202,8 @@ void			update_back_anim(t_game *game, int keycode);
 /**** Cutscenes ****/
 void			handle_scenes(t_game *game);
 void			show_scene(t_game *game, char *file_path);
-void			trigger_error_scene(t_game *game);
 void			trigger_victory_scene(t_game *game);
+double			get_time(void);
+void			my_usleep(double seconds);
 
 #endif

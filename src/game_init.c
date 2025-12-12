@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/12 13:02:11 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/12 14:08:55 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,8 +174,6 @@ void	init_game(t_game *game)
 	load_textures(game);
 	game->scene = 1;
 	game->scene_id = 0;
-	game->scene_ready = 0;
-	game->scene_frame_delay = 0;
 	handle_scenes(game);
 	mlx_hook(game->win, 17, 0, handle_close, game);
 	mlx_key_hook(game->win, handle_keypress, game);
