@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/12 14:52:32 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/12 20:58:31 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,6 @@ void			init_camera(t_game *game);
 void			update_camera(t_game *game);
 
 /**** Utils ****/
-// char		**ft_append_line(char **map, char *line, int count);
 int				handle_error(t_error error);
 void			free_map(char **map);
 void			free_visited(char **visited);
