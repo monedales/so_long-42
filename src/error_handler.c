@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:43:18 by mona              #+#    #+#             */
-/*   Updated: 2025/11/07 12:07:14 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/13 16:52:17 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@
  *              - ERR_NOT_WALLS: Map perimeter is not fully walled
  *              - ERR_ELEM_INVALID: Invalid count of P/E/C elements
  *              - ERR_NO_PATH: No valid path to all collectibles and exit
+ * 				- ERR_NO_WIN: failed to create window
+ *				- ERR_MAP_FAILED: failed to load map
+ *				- ERR_TEXTURE_FAILED: failed to load texture
  *
  * @return Always returns 1 to indicate error status for main() exit code.
  *

@@ -122,9 +122,10 @@ static void	render_gradient_background(t_game *game)
  * Displays the current move count in the top-left corner of the game
  * window using MiniLibX's text rendering. Creates a black outline effect
  * by drawing the text multiple times with slight offsets (creating shadow),
- * then drawing the main white text on top. This ensures readability against
- * any background color.
+ * then drawing the main text in cyan/aqua color on top. This ensures
+ * excellent readability against any background color.
  *
+ * The outline is drawn in a 3x3 grid for better visibility.
  * Memory is properly managed by freeing the dynamically created strings.
  * 
  * @param game Pointer to the game structure containing move count and MLX data.
@@ -138,15 +139,18 @@ static void	render_move_counter(t_game *game)
 
 	moves_str = ft_itoa(game->moves);
 	counter_text = ft_strjoin("Moves: ", moves_str);
-	i = -1;
-	while (++i < 2)
+	i = -2;
+	while (++i < 3)
 	{
-		j = -1;
-		while (++j < 2)
-			mlx_string_put(game->mlx, game->win, 18 + i, 28 + j,
-				0x000000, counter_text);
+		j = -2;
+		while (++j < 3)
+		{
+			if (i != 0 || j != 0)
+				mlx_string_put(game->mlx, game->win, 13 + i, 23 + j,
+					0x000000, counter_text);
+		}
 	}
-	mlx_string_put(game->mlx, game->win, 18, 28, 0xFFFFFF, counter_text);
+	mlx_string_put(game->mlx, game->win, 13, 23, 0xFFD700, counter_text);
 	free(moves_str);
 	free(counter_text);
 }
