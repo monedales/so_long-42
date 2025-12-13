@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/10 14:34:36 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/13 15:34:17 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,20 +145,23 @@ t_point	find_player(char **map)
  */
 void	flood_fill_helper(char **map, char **visited, t_flood_params p)
 {
+	t_flood_params	next;
+
 	if (p.x < 0 || p.x >= p.width || p.y < 0 || p.y >= p.height)
 		return ;
 	if (visited[p.y][p.x] || map[p.y][p.x] == '1')
 		return ;
+	if (map[p.y][p.x] == 'F' || map[p.y][p.x] == 'G' || map[p.y][p.x] == 'R')
+		return ;
 	visited[p.y][p.x] = 1;
-	p.x++;
-	flood_fill_helper(map, visited, p);
-	p.x -= 2;
-	flood_fill_helper(map, visited, p);
-	p.x++;
-	p.y++;
-	flood_fill_helper(map, visited, p);
-	p.y -= 2;
-	flood_fill_helper(map, visited, p);
+	next = (t_flood_params){p.x + 1, p.y, p.width, p.height};
+	flood_fill_helper(map, visited, next);
+	next = (t_flood_params){p.x - 1, p.y, p.width, p.height};
+	flood_fill_helper(map, visited, next);
+	next = (t_flood_params){p.x, p.y + 1, p.width, p.height};
+	flood_fill_helper(map, visited, next);
+	next = (t_flood_params){p.x, p.y - 1, p.width, p.height};
+	flood_fill_helper(map, visited, next);
 }
 
 /**

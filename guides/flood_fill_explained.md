@@ -216,6 +216,8 @@ int	check_accessible(char **map, char **visited, int height)
 ```c
 void	flood_fill_helper(char **map, char **visited, t_flood_params p)
 {
+	t_flood_params	next;
+
 	// BASE CASES (stop conditions):
 	
 	// 1. Out of bounds?
@@ -226,23 +228,72 @@ void	flood_fill_helper(char **map, char **visited, t_flood_params p)
 	if (visited[p.y][p.x] || map[p.y][p.x] == '1')
 		return;
 	
+	// 3. Hit an obstacle that blocks movement (platform, ground, roof)?
+	if (map[p.y][p.x] == 'F' || map[p.y][p.x] == 'G' || map[p.y][p.x] == 'R')
+		return;
+	
 	// RECURSIVE STEP:
 	
 	// Mark current cell as visited
 	visited[p.y][p.x] = 1;
 	
-	// Flood in all 4 directions (modifying params for each direction)
-	p.x++;
-	flood_fill_helper(map, visited, p);  // → Right
-	p.x -= 2;
-	flood_fill_helper(map, visited, p);  // ← Left
-	p.x++;
-	p.y++;
-	flood_fill_helper(map, visited, p);  // ↓ Down
-	p.y -= 2;
-	flood_fill_helper(map, visited, p);  // ↑ Up
+	// Flood in all 4 directions using compound literals
+	// Each line creates a NEW struct with updated coordinates
+	
+	next = (t_flood_params){p.x + 1, p.y, p.width, p.height};
+	flood_fill_helper(map, visited, next);  // → Right
+	
+	next = (t_flood_params){p.x - 1, p.y, p.width, p.height};
+	flood_fill_helper(map, visited, next);  // ← Left
+	
+	next = (t_flood_params){p.x, p.y + 1, p.width, p.height};
+	flood_fill_helper(map, visited, next);  // ↓ Down
+	
+	next = (t_flood_params){p.x, p.y - 1, p.width, p.height};
+	flood_fill_helper(map, visited, next);  // ↑ Up
 }
 ```
+
+#### 💡 Understanding Compound Literals
+
+The syntax `(t_flood_params){x, y, width, height}` is called a **compound literal** (C99 feature).
+
+**What it does:**
+- Creates a temporary `t_flood_params` struct
+- Initializes it with the values inside `{}`
+- Assigns it to the `next` variable
+
+**It's equivalent to:**
+```c
+t_flood_params next;
+next.x = p.x + 1;
+next.y = p.y;
+next.width = p.width;
+next.height = p.height;
+```
+
+**Why we use it:**
+- ✅ More concise and readable
+- ✅ Makes direction clear at a glance: `{p.x + 1, p.y, ...}` = move right
+- ✅ Avoids confusing increment/decrement operations
+- ✅ Allowed by norminette (C99 standard)
+
+**Breaking down the syntax:**
+```c
+next = (t_flood_params){p.x + 1, p.y, p.width, p.height};
+       ^              ^^       ^^   ^^      ^^        ^
+       |              ||       ||   ||      ||        |
+       Cast           |Member1 |M2  |M3     |M4       |
+                      |        |    |       |         |
+                      └────────┴────┴───────┴─────────┘
+                           Struct initializer values
+```
+
+1. **`(t_flood_params)`** - Cast/type specifier
+2. **`{...}`** - Brace-enclosed initializer list
+3. **`p.x + 1`** - Value for x field (move right)
+4. **`p.y`** - Value for y field (same row)
+5. **`p.width, p.height`** - Dimensions stay the same
 
 ### 4. **Data Structure: `t_flood_params`**
 
@@ -263,7 +314,40 @@ This structure packages all necessary information for the recursive flood fill, 
 ## 🧠 Key Concepts
 
 ### Recursion
-Each call explores one cell and spawns 4 more calls for adjacent cells. The recursion naturally stops when it hits walls or already-visited cells.
+Each call explores one cell and spawns 4 more calls for adjacent cells. The recursion naturally stops when it hits:
+- Walls ('1')
+- Obstacles that block movement ('F', 'G', 'R')
+- Already-visited cells
+- Map boundaries
+
+### Compound Literals (C99)
+We use **compound literals** to create temporary structs inline:
+```c
+next = (t_flood_params){p.x + 1, p.y, p.width, p.height};
+```
+
+**Benefits:**
+- Clearer intent: immediately obvious we're moving RIGHT (x+1)
+- No confusing `p.x++; call(); p.x -= 2;` patterns
+- Each direction is self-contained on its own line
+- Less error-prone (no risk of forgetting to restore values)
+
+**Old way (confusing):**
+```c
+p.x++;           // Move right
+flood_fill(p);
+p.x -= 2;        // Undo right, go left
+flood_fill(p);
+p.x++;           // Restore x
+```
+
+**New way (clear):**
+```c
+next = (t_flood_params){p.x + 1, p.y, p.width, p.height};  // Right
+flood_fill(next);
+next = (t_flood_params){p.x - 1, p.y, p.width, p.height};  // Left
+flood_fill(next);
+```
 
 ### t_flood_params Structure
 Instead of passing many parameters individually, we use a structure (`t_flood_params`) to package:
