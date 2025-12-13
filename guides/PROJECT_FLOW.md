@@ -62,11 +62,13 @@ main(argc, argv)
 read_map(filename)
     ├─ Open file
     ├─ get_next_line() for each line
-    ├─ Store in char **grid
+    ├─ trim_newline() → Remove \n
+    ├─ ft_append_line() → Add to char **grid
+    ├─ Free line after appending
     └─ Return grid
 ```
 
-**File:** `src/file_utils.c`
+**File:** `src/map_parser.c`
 
 ### Map Validation Flow
 ```
@@ -89,13 +91,11 @@ validate_map(grid)
 - `src/pathfinding.c` - Flood fill algorithm
 
 **Validation Errors:**
-- `ERR_SHAPE` - Not rectangular
-- `ERR_WALLS` - Missing border walls
-- `ERR_P` - No player or multiple players
-- `ERR_E` - No exit or multiple exits
-- `ERR_C` - No collectibles
-- `ERR_CHARS` - Invalid characters
-- `ERR_PATH` - No valid path to collectibles/exit
+- `ERR_NOT_RECTANG` - Not rectangular
+- `ERR_NOT_WALLS` - Missing border walls
+- `ERR_ELEM_INVALID` - No player/exit or wrong count
+- `ERR_CHARS_INVALID` - Invalid characters
+- `ERR_NO_PATH` - No valid path to collectibles/exit
 
 ---
 
@@ -196,35 +196,110 @@ Uses `gettimeofday()` for microsecond precision (no `usleep()` allowed by 42).
 
 ## 🔄 Game Loop
 
-### Main Loop (mlx_loop)
+### Understanding mlx_loop()
+
+O `mlx_loop(game.mlx)` é o **coração do jogo** - um loop infinito que mantém o programa rodando até chamarmos `exit()`.
+
+**Como funciona:**
+```c
+int main(int argc, char **argv)
+{
+    // ... validação e inicialização ...
+    
+    init_game(&game);  // ← Registra os hooks aqui
+    mlx_loop(game.mlx); // ← Entra no loop infinito
+    
+    return (0);  // ← Nunca chega aqui (exit() é chamado antes)
+}
 ```
-mlx_loop(mlx)
-    └─ Infinite loop:
-        ├─ Process X11 events
-        ├─ Call loop_hook → update_animation()
-        ├─ Handle keyboard events → handle_keypress()
-        └─ Handle window close → handle_close()
+
+### Hooks (Event Callbacks)
+
+Durante `init_game()`, registramos 3 **hooks** (funções que o MiniLibX chama automaticamente):
+
+```c
+void init_game(t_game *game)
+{
+    // ... inicialização ...
+    
+    // Hook 1: Fechar janela (evento 17 do X11)
+    mlx_hook(game->win, 17, 0, handle_close, game);
+    
+    // Hook 2: Teclado (qualquer tecla pressionada)
+    mlx_key_hook(game->win, handle_keypress, game);
+    
+    // Hook 3: Loop contínuo (chamado a cada frame)
+    mlx_loop_hook(game->mlx, update_animation, game);
+}
 ```
+
+### Main Loop (mlx_loop) - Anatomia
+
+```
+mlx_loop(game.mlx)  ← LOOP INFINITO
+    │
+    ├─────────────────────────────────────────────────
+    │  CADA ITERAÇÃO DO LOOP (60+ vezes por segundo):
+    │
+    ├─ [1] Processa eventos do X11
+    │      (movimento do mouse, redraw, etc.)
+    │
+    ├─ [2] Chama mlx_loop_hook automaticamente
+    │      └─→ update_animation(game)
+    │          ├─ Incrementa contadores
+    │          ├─ Atualiza frame de animações
+    │          └─ Chama render_map() se necessário
+    │
+    ├─ [3] Se tecla foi pressionada:
+    │      └─→ handle_keypress(keycode, game)
+    │          ├─ ESC → close_game() → exit(0) → SAI DO LOOP ✗
+    │          ├─ ENTER (se scene mode) → avança cutscene
+    │          └─ WASD/Arrows → move_player()
+    │
+    ├─ [4] Se clicou botão [X] da janela:
+    │      └─→ handle_close(game)
+    │          └─ close_game() → exit(0) → SAI DO LOOP ✗
+    │
+    └─ Volta para o início do loop ↻
+       (continua até exit() ser chamado)
+```
+
+**IMPORTANTE:** O loop só termina quando chamamos `exit(0)` dentro de `close_game()`!
 
 ### Animation Update (every frame)
 ```
-update_animation(game)
-    ├─ Update frame counter
-    ├─ Check animation delays
-    ├─ Update player sprite
-    │   ├─ Switch walk frames
-    │   ├─ Handle idle animation
-    │   └─ Update direction
-    ├─ Update collectible sprites (cheese animation)
-    └─ render_map() → Redraw everything
+update_animation(game)  ← Chamado automaticamente pelo mlx_loop_hook
+    │
+    ├─ Incrementa contadores globais:
+    │   ├─ player.anim_counter++  (para idle animation)
+    │   └─ cheese_counter++       (para cheese animation)
+    │
+    ├─ Update Player Idle Animation:
+    │   ├─ Se player.anim_counter >= IDLE_WAIT (300000):
+    │   │   └─ A cada ANIM_DELAY frames (5000):
+    │   │       ├─ player.frame = (frame + 1) % IDLE_FRAMES
+    │   │       └─ render_map() se frame mudou
+    │   └─ (Tail wagging effect quando parado)
+    │
+    ├─ Update Cheese Animation:
+    │   └─ A cada CHEESE_DELAY frames (20000):
+    │       ├─ cheese_frame = (frame + 1) % 5
+    │       └─ render_map() se frame mudou
+    │
+    └─ Update Collecting Animation:
+        └─ Se player.is_collecting:
+            ├─ collect_counter++
+            └─ Se counter >= COLLECT_DURATION:
+                └─ is_collecting = 0
 ```
 
-**File:** `src/events_animation.c`
+**Files:** `src/events_animation.c`
 
-**Animation Timing:**
-- Walk animation: Every 5000 frames
-- Idle animation: After 300000 frames stationary
-- Collectible: Every 20000 frames
+**Timing Values:**
+- `ANIM_DELAY = 5000` - Walk/idle animation speed
+- `IDLE_WAIT = 300000` - Time before idle animation starts
+- `CHEESE_DELAY = 20000` - Cheese rotation speed
+- `COLLECT_DURATION = 15000` - Collection animation duration
 
 ---
 
@@ -232,15 +307,18 @@ update_animation(game)
 
 ### Keyboard Input Flow
 ```
-handle_keypress(keycode, game)
-    ├─ If in scene mode AND keycode == ENTER:
-    │   ├─ scene_id++
-    │   └─ handle_scenes() → Next scene
+handle_keypress(keycode, game)  ← Chamado quando qualquer tecla é pressionada
     │
-    ├─ If keycode == ESC:
-    │   └─ close_game() → Exit
+    ├─ [PRIORITY 1] ESC Key:
+    │   └─ close_game() → Cleanup → exit(0)
     │
-    └─ If movement key (WASD/Arrows):
+    ├─ [PRIORITY 2] Scene Mode (game->scene == 1):
+    │   └─ If keycode == ENTER:
+    │       ├─ game->scene_id++
+    │       ├─ handle_scenes() → Next cutscene
+    │       └─ return (block other inputs)
+    │
+    └─ [PRIORITY 3] Play Mode (game->scene == 0):
         └─ handle_movement() → Try to move player
 ```
 
@@ -248,48 +326,107 @@ handle_keypress(keycode, game)
 
 ### Movement Processing
 ```
-handle_movement(keycode, game)
-    ├─ Determine direction (UP/DOWN/LEFT/RIGHT)
-    ├─ Calculate new position (new_x, new_y)
-    └─ move_player(game, new_x, new_y)
+handle_movement(keycode, game)  ← Processa movimento do jogador
+    │
+    ├─ Step 1: Calculate new position
+    │   └─ process_movement(keycode, &new_x, &new_y, game)
+    │       ├─ W/UP    → new_y--, direction = DIR_BACK
+    │       ├─ S/DOWN  → new_y++, direction = DIR_FRONT
+    │       ├─ A/LEFT  → new_x--, direction = DIR_LEFT
+    │       └─ D/RIGHT → new_x++, direction = DIR_RIGHT
+    │
+    ├─ Step 2: Update animation direction
+    │   └─ update_back_anim(game, keycode)
+    │       └─ Se tecla W/UP: alterna frame (paw animation)
+    │
+    ├─ Step 3: Validate move
+    │   └─ is_valid_move(game, new_x, new_y)
+    │       ├─ Check boundaries (0 <= x < width, 0 <= y < height)
+    │       ├─ Check walls: '1' = blocked ❌
+    │       ├─ Check platforms: 'F' = blocked ❌
+    │       ├─ Check floor: 'G' = blocked ❌
+    │       ├─ Check roof: 'R' = blocked ❌
+    │       └─ Valid tiles: '0', 'P', 'C', 'E' = can walk ✅
+    │
+    └─ Step 4: Execute move (if valid)
+        └─ move_player(game, new_x, new_y)
+            [See Player Movement Logic below]
 ```
 
 ### Player Movement Logic
 ```
 move_player(game, new_x, new_y)
-    ├─ is_valid_move()?
-    │   ├─ Check boundaries
-    │   ├─ Check walls/platforms
-    │   └─ Return 0 if blocked
     │
-    ├─ Check tile at new position:
-    │   ├─ 'C' → Collect item
-    │   │   ├─ collectibles_collected++
-    │   │   └─ Remove from map
-    │   │
-    │   ├─ 'E' → Check if can exit
-    │   │   ├─ If all collected:
-    │   │   │   ├─ render_map()
-    │   │   │   └─ trigger_victory_scene()
-    │   │   └─ Else: Can walk over exit
-    │   │
-    │   └─ '0'/'P' → Normal move
+    ├─ Step 1: Check collectible
+    │   └─ If map[new_y][new_x] == 'C':
+    │       ├─ game->map.collected++
+    │       ├─ player.is_collecting = 1
+    │       └─ map[new_y][new_x] = '0'  (remove from map)
     │
-    ├─ Update player position
-    ├─ Update map grid
-    ├─ Increment move counter
-    ├─ Update camera
-    ├─ Reset idle timer
-    └─ render_map()
+    ├─ Step 2: Check victory condition
+    │   └─ If map[new_y][new_x] == 'E' AND collected == collectibles:
+    │       ├─ update_map_grid(game, new_x, new_y)
+    │       ├─ game->map.player_pos = (new_x, new_y)
+    │       ├─ game->moves++
+    │       ├─ render_map() → Draw final state
+    │       ├─ trigger_victory_scene()
+    │       │   ├─ game->scene = 1
+    │       │   ├─ game->scene_id = 10
+    │       │   └─ handle_scenes() → Victory cutscene
+    │       └─ return
+    │
+    ├─ Step 3: Update map grid
+    │   └─ update_map_grid(game, new_x, new_y)
+    │       ├─ If old_pos == exit_pos: restore 'E'
+    │       ├─ Else: set old_pos to '0'
+    │       └─ Set new_pos to 'P'
+    │
+    ├─ Step 4: Update player state
+    │   ├─ game->map.player_pos.x = new_x
+    │   ├─ game->map.player_pos.y = new_y
+    │   ├─ game->moves++
+    │   └─ game->player.walk_frame++
+    │
+    ├─ Step 5: Print to terminal
+    │   └─ ft_printf("Moves: %d\n", game->moves)
+    │
+    └─ Step 6: Render update
+        └─ render_map()
+            [See Rendering Pipeline below]
 ```
+
+**Special Cases:**
+- Can walk over 'E' (exit) without all collectibles
+- Exit tile is preserved when leaving it
+- Player position always marked as 'P' in grid
 
 ### Victory Trigger
 ```
-trigger_victory_scene(game)
-    ├─ Set scene = 1 (enable scene mode)
-    ├─ Set scene_id = 10 (victory scene)
-    └─ handle_scenes() → Show victory + close
+trigger_victory_scene(game)  ← Chamado quando player chega no exit com tudo coletado
+    │
+    ├─ game->scene = 1        (ativa modo cutscene)
+    ├─ game->scene_id = 10    (ID da vitória)
+    └─ handle_scenes()
+        │
+        └─ If scene_id == 10:
+            ├─ show_scene("assets/scenes/to-be-continued.xpm")
+            │   ├─ mlx_xpm_file_to_image() → Load image
+            │   ├─ mlx_put_image_to_window() → Display
+            │   ├─ mlx_do_sync() → Force update
+            │   └─ mlx_destroy_image() → Free image
+            │
+            ├─ my_usleep(3.0)  ← Busy-wait 3 seconds
+            │   └─ while (get_time() - start < 3.0)
+            │       └─ Loop (no usleep allowed by 42)
+            │
+            ├─ ft_printf("\n🎉 WEERK! YOU WIN! 🎉\n")
+            ├─ ft_printf("Moves: %d\n", game->moves)
+            │
+            └─ close_game(game)
+                └─ [See Game End section]
 ```
+
+**File:** `src/scenes.c`
 
 ---
 
@@ -297,24 +434,62 @@ trigger_victory_scene(game)
 
 ### Complete Render Flow
 ```
-render_map(game)
-    ├─ Clear frame buffer
-    ├─ Calculate visible area (camera viewport)
-    ├─ For each visible tile:
-    │   ├─ Draw base tile (floor/wall)
-    │   ├─ Draw decorations (platform, roof, etc.)
-    │   ├─ Draw collectibles (if present)
-    │   └─ Draw exit (if present)
+render_map(game)  ← Chamado sempre que precisa redesenhar a tela
     │
-    ├─ Draw player sprite
-    │   ├─ Select sprite based on:
-    │   │   ├─ Direction (front/back/left/right)
-    │   │   ├─ State (idle/walk)
-    │   │   └─ Frame number
-    │   └─ Draw with transparency
+    ├─ Step 1: Update Camera
+    │   └─ update_camera(game)
+    │       ├─ Center camera on player position
+    │       ├─ Calculate viewport boundaries
+    │       ├─ Clamp to map edges (don't show outside)
+    │       └─ Store camera.x, camera.y (top-left corner)
     │
-    ├─ Draw move counter HUD
-    └─ mlx_put_image_to_window() → Display frame
+    ├─ Step 2: Clear Frame Buffer
+    │   └─ Fill entire frame with black (or background color)
+    │
+    ├─ Step 3: Calculate Visible Area
+    │   ├─ start_x = camera.x / tile_size
+    │   ├─ start_y = camera.y / tile_size
+    │   ├─ end_x = (camera.x + camera.width) / tile_size + 1
+    │   └─ end_y = (camera.y + camera.height) / tile_size + 1
+    │
+    ├─ Step 4: Render Visible Tiles (nested loops)
+    │   └─ For each tile in visible area:
+    │       │
+    │       ├─ Calculate screen position:
+    │       │   ├─ screen_x = (tile_x * 64) - camera.x
+    │       │   └─ screen_y = (tile_y * 64) - camera.y
+    │       │
+    │       ├─ Layer 1 - Base Tiles:
+    │       │   ├─ If '1' → render_tile(wall)
+    │       │   ├─ If '0' → render_tile(floor)
+    │       │   ├─ If 'F' → render_tile(platform)
+    │       │   ├─ If 'G' → render_tile(floor)
+    │       │   └─ If 'R' → render_roof(roof)
+    │       │
+    │       ├─ Layer 2 - Collectibles:
+    │       │   └─ If 'C' → render_sprite_centered(cheese[frame])
+    │       │       └─ Uses game->cheese_frame (0-4)
+    │       │
+    │       └─ Layer 3 - Exit:
+    │           └─ If 'E' → render_sprite_centered(exit)
+    │
+    ├─ Step 5: Render Player
+    │   └─ get_player_sprite(game)
+    │       ├─ If is_collecting → collect sprite
+    │       ├─ Else based on current_dir:
+    │       │   ├─ DIR_FRONT → front + (walk_frame ? paw : no_paw)
+    │       │   ├─ DIR_BACK → back[frame] (idle animation)
+    │       │   ├─ DIR_LEFT → left + (walk_frame ? paw : no_paw)
+    │       │   └─ DIR_RIGHT → right + (walk_frame ? paw : no_paw)
+    │       └─ render_sprite_centered(player_sprite)
+    │           └─ Handles transparency (skip 0xFF00FF pixels)
+    │
+    ├─ Step 6: Draw HUD (Move Counter)
+    │   └─ Draw move counter text at top-left corner
+    │
+    └─ Step 7: Display Frame
+        └─ mlx_put_image_to_window(frame.img)
+            └─ Copy frame buffer to screen (double buffering)
 ```
 
 **Files:**
@@ -407,53 +582,85 @@ Click [X] on window
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │                   INITIALIZATION                        │
-│  MLX → Window → Camera → Textures → Hooks → Cutscene   │
+│  MLX → Parse dimensions → Parse data → Window →        │
+│  Camera → Textures → Scene setup (scene=1, id=0) →     │
+│  Hooks (close, keypress, animation) → handle_scenes()  │
 └────────────────────┬────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │                   INTRO CUTSCENE                        │
-│         Show intro-louis.xpm (3s) → Press ENTER         │
+│    scene_id=0: show intro-louis.xpm (3s wait)          │
+│              Wait for ENTER key press                   │
+│    scene_id=1: Set scene=0 → render_map() → Start game │
 └────────────────────┬────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │                     GAME LOOP                           │
 │  ┌───────────────────────────────────────────────────┐  │
-│  │  update_animation() ──────────────────────┐       │  │
-│  │     ↓                                     │       │  │
-│  │  Update sprites → render_map()            │       │  │
-│  │     ↓                ↓                    │       │  │
-│  │  Draw tiles → Draw player → Draw HUD      │       │  │
-│  │                                            │       │  │
-│  │  handle_keypress() ────────────────────┐  │       │  │
-│  │     ↓                                  │  │       │  │
-│  │  Move player? → Update state → Render │  │       │  │
-│  │                                        │  │       │  │
-│  └────────────────────────────────────────┼──┼───────┘  │
-│                                           │  │          │
-│  Collect all items? ──────────────────────┘  │          │
-│         │                                    │          │
-│         YES                                  NO         │
-│         ↓                                    ↓          │
-│    Go to Exit? ──────────────────────────► Continue    │
-│         │                                    │          │
-│         YES                                  │          │
-│         ↓                                    │          │
-│    Victory Scene ◄───────────────────────────┘          │
+│  │  update_animation() (every frame)                 │  │
+│  │     ├─ player.anim_counter++                      │  │
+│  │     ├─ Update idle animation (if counter > WAIT)  │  │
+│  │     ├─ Update cheese animation (cycle frames)     │  │
+│  │     └─ render_map() if frame changed              │  │
+│  │                                                    │  │
+│  │  handle_keypress(keycode)                         │  │
+│  │     ├─ ESC → close_game()                         │  │
+│  │     ├─ If scene mode: ENTER → scene_id++          │  │
+│  │     └─ If play mode (scene=0):                    │  │
+│  │         ├─ process_movement() → new_x, new_y      │  │
+│  │         ├─ update_back_anim() → sprite direction  │  │
+│  │         ├─ is_valid_move() → check collision      │  │
+│  │         └─ move_player():                         │  │
+│  │             ├─ Collect 'C' → collected++          │  │
+│  │             ├─ Check Exit 'E':                    │  │
+│  │             │   └─ If all collected:              │  │
+│  │             │       ├─ update_map_grid()          │  │
+│  │             │       ├─ moves++                    │  │
+│  │             │       ├─ render_map()               │  │
+│  │             │       └─ trigger_victory_scene()    │  │
+│  │             ├─ update_map_grid()                  │  │
+│  │             ├─ moves++                            │  │
+│  │             ├─ walk_frame++                       │  │
+│  │             ├─ ft_printf("Moves: %d")             │  │
+│  │             └─ render_map()                       │  │
+│  │                 ├─ update_camera() → follow       │  │
+│  │                 ├─ Draw visible tiles             │  │
+│  │                 ├─ Draw player sprite             │  │
+│  │                 ├─ Draw HUD (move counter)        │  │
+│  │                 └─ mlx_put_image_to_window()      │  │
+│  └───────────────────────────────────────────────────┘  │
 └────────────────────┬────────────────────────────────────┘
-                     │
+                     │ (Victory triggered)
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│                 VICTORY CUTSCENE                        │
-│   Show to-be-continued.xpm (2s) → Auto-close           │
+│                 VICTORY SEQUENCE                        │
+│  trigger_victory_scene():                               │
+│      ├─ Set scene=1, scene_id=10                        │
+│      └─ handle_scenes():                                │
+│          ├─ show_scene(to-be-continued.xpm)             │
+│          ├─ my_usleep(3.0) → Busy-wait 3 seconds        │
+│          ├─ ft_printf("🎉 WEERK! YOU WIN! 🎉")         │
+│          ├─ ft_printf("Moves: %d")                      │
+│          └─ close_game()                                │
 └────────────────────┬────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │                    CLEANUP & EXIT                       │
-│  Free textures → Destroy window → Free map → exit(0)   │
+│  close_game():                                          │
+│      ├─ free_textures() → mlx_destroy_image() all      │
+│      ├─ mlx_destroy_window()                            │
+│      ├─ free_map() → free grid rows + array             │
+│      ├─ mlx_destroy_display()                           │
+│      ├─ free(mlx)                                       │
+│      └─ exit(0) → Clean termination                     │
 └─────────────────────────────────────────────────────────┘
+
+ALTERNATIVE EXITS:
+  • ESC key → close_game() (same cleanup)
+  • Window [X] → handle_close() → close_game()
 ```
 
 ---
@@ -507,6 +714,7 @@ src/
 ├── map_validator.c    → Validate map
 ├── map_count.c        → Count elements
 ├── pathfinding.c      → Flood fill
+├── file_utils.c       → File utilities
 ├── free_textures.c    → Free sprites
 ├── free_utils.c       → Cleanup & exit
 └── error_handler.c    → Error messages

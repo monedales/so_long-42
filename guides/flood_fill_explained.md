@@ -92,58 +92,171 @@ Consider this map:
 ```c
 int	has_valid_path(char **map)
 {
-	t_point	player;
-	char	**visited;
-	int		width, height;
+	t_point			player;
+	char			**visited;
+	t_flood_params	params;
+	int				result;
 
-	// Find where the player starts
+	// 1. Find where the player starts
 	player = find_player(map);
+	if (player.x == -1 || player.y == -1)
+		return (0);
 	
-	// Create a copy to mark visited cells
-	visited = create_visited_map(width, height);
+	// 2. Calculate map dimensions
+	params.height = 0;
+	while (map[params.height])
+		params.height++;
+	params.width = ft_strlen(map[0]);
 	
-	// Start the flood from player position
-	flood_fill(map, visited, player.x, player.y, width, height);
+	// 3. Create a copy to mark visited cells
+	visited = create_visited_map(params.width, params.height);
+	if (!visited)
+		return (0);
 	
-	// Check if all C and E were visited
-	// If any C or E has visited[y][x] == 0, it's unreachable!
+	// 4. Start the flood from player position
+	params.x = player.x;
+	params.y = player.y;
+	flood_fill_helper(map, visited, params);
 	
+	// 5. Check if all C and E were visited
+	result = check_accessible(map, visited, params.height);
+	
+	// 6. Free memory and return result
 	free_visited(visited);
-	return (all_collectibles_and_exit_were_reached);
+	return (result);
 }
 ```
 
-### 2. **Core Algorithm: `flood_fill()`**
+### 2. **Helper Functions**
+
+#### `find_player()` - Locates the starting position
+```c
+t_point	find_player(char **map)
+{
+	t_point	pos;
+	int		i;
+	int		j;
+
+	pos.x = -1;
+	pos.y = -1;
+	i = 0;
+	while (map[i])
+	{
+		j = 0;
+		while (map[i][j])
+		{
+			if (map[i][j] == 'P')
+			{
+				pos.x = j;
+				pos.y = i;
+				return (pos);
+			}
+			j++;
+		}
+		i++;
+	}
+	return (pos);  // Returns (-1, -1) if not found
+}
+```
+
+#### `create_visited_map()` - Allocates tracking array
+```c
+char	**create_visited_map(int width, int height)
+{
+	char	**visited;
+	int		i;
+
+	// Allocate array of row pointers
+	visited = ft_calloc(height + 1, sizeof(char *));
+	if (!visited)
+		return (NULL);
+	
+	// Allocate each row (all initialized to 0)
+	i = 0;
+	while (i < height)
+	{
+		visited[i] = ft_calloc(width + 1, sizeof(char));
+		if (!visited[i])
+		{
+			free_visited_partial(visited, i);
+			return (NULL);
+		}
+		i++;
+	}
+	return (visited);
+}
+```
+
+#### `check_accessible()` - Validates reachability
+```c
+int	check_accessible(char **map, char **visited, int height)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < height)
+	{
+		j = 0;
+		while (map[i][j])
+		{
+			// If found C or E that wasn't visited, path is invalid
+			if ((map[i][j] == 'C' || map[i][j] == 'E') && !visited[i][j])
+				return (0);
+			j++;
+		}
+		i++;
+	}
+	return (1);  // All collectibles and exit are reachable!
+}
+```
+
+### 3. **Core Algorithm: `flood_fill_helper()`**
 
 ```c
-static void	flood_fill(char **map, char **visited, int x, int y, int width, int height)
+void	flood_fill_helper(char **map, char **visited, t_flood_params p)
 {
 	// BASE CASES (stop conditions):
 	
 	// 1. Out of bounds?
-	if (x < 0 || x >= width || y < 0 || y >= height)
+	if (p.x < 0 || p.x >= p.width || p.y < 0 || p.y >= p.height)
 		return;
 	
-	// 2. Already visited this cell?
-	if (visited[y][x])
-		return;
-	
-	// 3. Hit a wall?
-	if (map[y][x] == '1')
+	// 2. Already visited this cell OR hit a wall?
+	if (visited[p.y][p.x] || map[p.y][p.x] == '1')
 		return;
 	
 	// RECURSIVE STEP:
 	
 	// Mark current cell as visited
-	visited[y][x] = 1;
+	visited[p.y][p.x] = 1;
 	
-	// Flood in all 4 directions
-	flood_fill(map, visited, x + 1, y, width, height);  // →
-	flood_fill(map, visited, x - 1, y, width, height);  // ←
-	flood_fill(map, visited, x, y + 1, width, height);  // ↓
-	flood_fill(map, visited, x, y - 1, width, height);  // ↑
+	// Flood in all 4 directions (modifying params for each direction)
+	p.x++;
+	flood_fill_helper(map, visited, p);  // → Right
+	p.x -= 2;
+	flood_fill_helper(map, visited, p);  // ← Left
+	p.x++;
+	p.y++;
+	flood_fill_helper(map, visited, p);  // ↓ Down
+	p.y -= 2;
+	flood_fill_helper(map, visited, p);  // ↑ Up
 }
 ```
+
+### 4. **Data Structure: `t_flood_params`**
+
+```c
+typedef struct s_flood_params
+{
+	int	x;       // Current X position
+	int	y;       // Current Y position
+	int	width;   // Map width (for bounds checking)
+	int	height;  // Map height (for bounds checking)
+}	t_flood_params;
+```
+
+This structure packages all necessary information for the recursive flood fill, making the function signature cleaner and parameter passing more efficient.
 
 ---
 
@@ -152,9 +265,27 @@ static void	flood_fill(char **map, char **visited, int x, int y, int width, int 
 ### Recursion
 Each call explores one cell and spawns 4 more calls for adjacent cells. The recursion naturally stops when it hits walls or already-visited cells.
 
+### t_flood_params Structure
+Instead of passing many parameters individually, we use a structure (`t_flood_params`) to package:
+- Current position (x, y)
+- Map dimensions (width, height)
+
+This makes the code cleaner and avoids passing too many arguments to the recursive function.
+
 ### Two Arrays
 - `map[][]` - Original map (read-only, tells us where walls are)
 - `visited[][]` - Tracking array (marks which cells we've reached)
+
+We keep them separate because:
+1. We don't want to modify the original map
+2. The visited array is temporary and gets freed after validation
+3. We can mark visited cells with `1` while the map uses different characters
+
+### Memory Management
+The implementation includes careful memory management:
+- `create_visited_map()` uses `ft_calloc()` to initialize all cells to 0
+- `free_visited_partial()` handles partial cleanup if allocation fails
+- `free_visited()` frees the entire visited array after validation
 
 ### Why It Works
 If you can walk from P to a cell in the game, the flood fill will reach it. If flood fill can't reach a cell, neither can the player!
@@ -204,8 +335,14 @@ If you can walk from P to a cell in the game, the flood fill will reach it. If f
 
 ## 🔍 Complexity
 
-- **Time:** O(width × height) - Each cell visited once
-- **Space:** O(width × height) - Visited array + recursion stack
+- **Time:** O(width × height) - Each cell visited at most once
+- **Space:** O(width × height) - For the visited array + O(width × height) for recursion stack in worst case
+  
+### Why is it efficient?
+- Each cell is marked as visited when first reached
+- Subsequent attempts to visit the same cell return immediately
+- Walls stop the recursion from spreading further
+- Maximum recursion depth is limited by map size
 
 ---
 
@@ -217,6 +354,9 @@ If you can walk from P to a cell in the game, the flood fill will reach it. If f
 - [ ] I understand the recursive step (mark + flood 4 directions)
 - [ ] I can trace through an example manually
 - [ ] I know when a map is invalid (unreachable C or E)
+- [ ] I understand the role of `t_flood_params` structure
+- [ ] I understand how `check_accessible()` validates the result
+- [ ] I know why we need separate `map[][]` and `visited[][]` arrays
 
 ---
 
@@ -258,9 +398,19 @@ Is this valid? Trace the flood from P!
 ## 🚀 Next Steps
 
 Once you understand flood fill, you're ready for:
-- **FASE 2:** Rendering the map (you already know which cells are valid!)
-- **FASE 3:** Player movement (flood fill could help with move validation)
-- **BONUS:** Pathfinding for enemy AI (similar concept!)
+- **Game Rendering:** Use the validated map to draw the game world
+- **Player Movement:** Implement collision detection (similar boundary checks)
+- **Animation System:** Build on the working game loop
+- **BONUS:** Pathfinding for enemy AI (similar flood fill concept!)
+
+---
+
+## 📚 Related Files in the Project
+
+- **Implementation:** [pathfinding.c](../src/pathfinding.c) - Complete flood fill implementation
+- **Header:** [so_long.h](../include/so_long.h) - Structure definitions (`t_flood_params`, `t_point`)
+- **Validation:** [map_validator.c](../src/map_validator.c) - Calls `has_valid_path()` as part of validation
+- **Test Maps:** [maps/](../maps/) - Try `no_path.ber` to see flood fill catch invalid maps!
 
 ---
 
