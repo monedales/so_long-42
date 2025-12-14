@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   scenes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 19:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/12 15:37:36 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/14 15:33:17 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ void	handle_scenes(t_game *game)
 	{
 		show_scene(game, "assets/scenes/to-be-continued.xpm");
 		my_usleep(3.0);
-		ft_printf("\n🎉 WEERK! YOU WIN! 🎉\n");
 		ft_printf("Moves: %d\n", game->moves);
+		ft_printf("\n🎉 WEERK! YOU WIN! 🎉\n");
 		close_game(game);
 	}
 }
