@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   events.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/12 14:52:32 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/14 17:17:02 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
  *
  * Empty spaces ('0'), collectibles ('C'), exits ('E'), and the player
  * starting position ('P') are all valid movement targets.
- * 
+ *
  * @param game Pointer to the game structure containing the map.
  * @param new_x The target x-coordinate (column).
  * @param new_y The target y-coordinate (row).
@@ -34,6 +34,8 @@
  */
 static int	is_valid_move(t_game *game, int new_x, int new_y)
 {
+	if (new_x == game->map.player_pos.x && new_y == game->map.player_pos.y)
+		return (0);
 	if (new_x < 0 || new_x >= game->map.width)
 		return (0);
 	if (new_y < 0 || new_y >= game->map.height)
@@ -51,7 +53,7 @@ static int	is_valid_move(t_game *game, int new_x, int new_y)
 
 /**
  * @brief Updates the map grid after player movement.
- * 
+ *
  * @param game Pointer to the game structure.
  * @param new_x New x-coordinate.
  * @param new_y New y-coordinate.
@@ -85,7 +87,7 @@ static void	update_map_grid(t_game *game, int new_x, int new_y)
  * 6. Increments the move counter
  *
  * This function assumes the move has already been validated.
- * 
+ *
  * @param game Pointer to the game structure.
  * @param new_x The target x-coordinate (column) to move to.
  * @param new_y The target y-coordinate (row) to move to.
@@ -129,7 +131,7 @@ static void	move_player(t_game *game, int new_x, int new_y)
  *
  * The function modifies the new_x and new_y coordinates by reference
  * and updates the player's current direction for sprite animation.
- * 
+ *
  * @param keycode The keyboard key code from MiniLibX event.
  * @param new_x Pointer to the new x-coordinate to modify.
  * @param new_y Pointer to the new y-coordinate to modify.
@@ -165,7 +167,7 @@ static void	process_movement(int keycode, int *new_x, int *new_y, t_game *game)
  * Main keyboard event handler that processes player input and triggers
  * appropriate game actions. Processes ESC key to close game and movement
  * keys (WASD/Arrows) to move the player with collision detection.
- * 
+ *
  * @param keycode The keyboard key code from the MiniLibX event system.
  * @param game Pointer to the game structure containing all game state.
  *
@@ -189,8 +191,7 @@ int	handle_keypress(int keycode, t_game *game)
 	new_x = game->map.player_pos.x;
 	new_y = game->map.player_pos.y;
 	process_movement(keycode, &new_x, &new_y, game);
-	if (new_x != game->map.player_pos.x || new_y != game->map.player_pos.y)
-		update_back_anim(game, keycode);
+	update_back_anim(game, keycode);
 	if (is_valid_move(game, new_x, new_y))
 	{
 		move_player(game, new_x, new_y);

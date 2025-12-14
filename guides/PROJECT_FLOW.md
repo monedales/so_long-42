@@ -436,98 +436,222 @@ trigger_victory_scene(game)  ← Chamado quando player chega no exit com tudo co
 ```
 render_map(game)  ← Chamado sempre que precisa redesenhar a tela
     │
-    ├─ Step 1: Update Camera
+    ├─ Step 1: Render Gradient Background
+    │   └─ render_gradient_background(game)
+    │       ├─ Fill frame buffer pixel by pixel
+    │       ├─ Vertical gradient: white (top) → light gray (bottom)
+    │       ├─ gray = 255 - (y * 55 / height)
+    │       └─ color = (gray << 16) | (gray << 8) | gray
+    │
+    ├─ Step 2: Update Camera Position
     │   └─ update_camera(game)
-    │       ├─ Center camera on player position
-    │       ├─ Calculate viewport boundaries
-    │       ├─ Clamp to map edges (don't show outside)
-    │       └─ Store camera.x, camera.y (top-left corner)
+    │       ├─ target_x = player_x - (camera_width / 2)
+    │       ├─ target_y = player_y - (camera_height / 2)
+    │       ├─ Clamp to boundaries (0 to max_x/max_y)
+    │       └─ Store camera.x, camera.y (in tiles, not pixels)
     │
-    ├─ Step 2: Clear Frame Buffer
-    │   └─ Fill entire frame with black (or background color)
+    ├─ Step 3: Iterate Through Visible Tiles
+    │   └─ For y from camera.y to camera.y + camera.height:
+    │       └─ For x from camera.x to camera.x + camera.width:
+    │           └─ render_cell(game, x, y)
     │
-    ├─ Step 3: Calculate Visible Area
-    │   ├─ start_x = camera.x / tile_size
-    │   ├─ start_y = camera.y / tile_size
-    │   ├─ end_x = (camera.x + camera.width) / tile_size + 1
-    │   └─ end_y = (camera.y + camera.height) / tile_size + 1
-    │
-    ├─ Step 4: Render Visible Tiles (nested loops)
-    │   └─ For each tile in visible area:
+    ├─ Step 4: Render Each Cell (render_cell)
+    │   └─ Based on map.grid[y][x]:
+    │       ├─ If '1' → render_tile(&game->wall)
+    │       │   └─ Centered in cell (offset = (64 - width) / 2)
     │       │
-    │       ├─ Calculate screen position:
-    │       │   ├─ screen_x = (tile_x * 64) - camera.x
-    │       │   └─ screen_y = (tile_y * 64) - camera.y
+    │       ├─ If 'R' → render_roof(&game->roof)
+    │       │   ├─ Horizontally centered
+    │       │   └─ Vertically aligned to TOP (offset_y = 0)
     │       │
-    │       ├─ Layer 1 - Base Tiles:
-    │       │   ├─ If '1' → render_tile(wall)
-    │       │   ├─ If '0' → render_tile(floor)
-    │       │   ├─ If 'F' → render_tile(platform)
-    │       │   ├─ If 'G' → render_tile(floor)
-    │       │   └─ If 'R' → render_roof(roof)
+    │       ├─ If 'G' → render_tile(&game->floor)
+    │       │   └─ Centered in cell
     │       │
-    │       ├─ Layer 2 - Collectibles:
-    │       │   └─ If 'C' → render_sprite_centered(cheese[frame])
-    │       │       └─ Uses game->cheese_frame (0-4)
+    │       ├─ If 'F' → render_sprite_centered(&game->platform)
+    │       │   └─ Centered with transparency support
     │       │
-    │       └─ Layer 3 - Exit:
-    │           └─ If 'E' → render_sprite_centered(exit)
+    │       ├─ If 'C' → render_sprite_centered(&game->cheese[frame])
+    │       │   └─ Animated cheese (frame 0-4)
+    │       │
+    │       ├─ If 'E' → render_sprite_centered(&game->exit)
+    │       │   └─ Exit door sprite
+    │       │
+    │       └─ If 'P' → get_player_sprite() → render_sprite_centered()
+    │           └─ [See Player Sprite Selection below]
     │
-    ├─ Step 5: Render Player
-    │   └─ get_player_sprite(game)
-    │       ├─ If is_collecting → collect sprite
-    │       ├─ Else based on current_dir:
-    │       │   ├─ DIR_FRONT → front + (walk_frame ? paw : no_paw)
-    │       │   ├─ DIR_BACK → back[frame] (idle animation)
-    │       │   ├─ DIR_LEFT → left + (walk_frame ? paw : no_paw)
-    │       │   └─ DIR_RIGHT → right + (walk_frame ? paw : no_paw)
-    │       └─ render_sprite_centered(player_sprite)
-    │           └─ Handles transparency (skip 0xFF00FF pixels)
+    ├─ Step 5: Handle Special Case - Player on Exit
+    │   └─ render_player_on_exit(game, x, y)
+    │       └─ If player_pos == exit_pos == current_cell:
+    │           ├─ Draw exit sprite first
+    │           └─ Draw player sprite on top (proper layering)
     │
-    ├─ Step 6: Draw HUD (Move Counter)
-    │   └─ Draw move counter text at top-left corner
+    ├─ Step 6: Display Frame Buffer
+    │   └─ mlx_put_image_to_window(game->frame.img)
+    │       └─ Copy entire frame buffer to window (double buffering)
     │
-    └─ Step 7: Display Frame
-        └─ mlx_put_image_to_window(frame.img)
-            └─ Copy frame buffer to screen (double buffering)
+    └─ Step 7: Overlay Move Counter
+        └─ render_move_counter(game)
+            ├─ Create text: "Moves: " + ft_itoa(moves)
+            ├─ Draw black outline (3x3 grid around text)
+            │   └─ 8 shadows at offsets (-2 to +2) in black
+            ├─ Draw main text in gold (0xFFD700) at (13, 23)
+            └─ Free allocated strings
 ```
 
 **Files:**
-- `src/render.c` - Main rendering
-- `src/render_tiles.c` - Tile drawing
-- `src/render_utils.c` - Sprite utilities
+- `src/render.c` - Main rendering orchestration
+- `src/render_tiles.c` - Tile & sprite positioning
+- `src/render_utils.c` - Low-level pixel operations
 - `src/camera.c` - Viewport calculations
+
+### Player Sprite Selection
+```
+get_player_sprite(game)  ← Determina qual sprite do jogador usar
+    │
+    ├─ Priority 1: Collecting Animation
+    │   └─ If is_collecting: return &player.collect
+    │
+    ├─ Priority 2: Idle Animation (tail wag)
+    │   └─ If anim_counter >= IDLE_WAIT (300000):
+    │       └─ return &player.back[frame]  (cycles 0-1)
+    │
+    ├─ Priority 3: Directional Sprites
+    │   ├─ DIR_BACK:
+    │   │   └─ return &player.back[frame]
+    │   │
+    │   ├─ DIR_LEFT:
+    │   │   ├─ If walk_frame % 2 == 0: return &player.left
+    │   │   └─ Else: return &player.left_paw
+    │   │
+    │   ├─ DIR_RIGHT:
+    │   │   ├─ If walk_frame % 2 == 0: return &player.right
+    │   │   └─ Else: return &player.right_paw
+    │   │
+    │   └─ DIR_FRONT (default):
+    │       ├─ If moves == 0: return &player.front (initial state)
+    │       ├─ If walk_frame % 2 == 0: return &player.front_paw
+    │       └─ Else: return &player.front_paw_mirror
+```
 
 ### Camera Viewport System
 ```
-Camera bounds (800x600 max window)
-    ├─ If map <= viewport: Show entire map
+init_camera(game)  ← Inicialização única no setup
     │
-    └─ If map > viewport: Follow player
-        ├─ Center camera on player
-        ├─ Clamp to map boundaries
-        └─ Calculate visible tiles
+    ├─ Calculate viewport dimensions (in tiles):
+    │   ├─ camera.width = frame.width / tile_size
+    │   └─ camera.height = frame.height / tile_size
+    │
+    ├─ Calculate maximum camera position:
+    │   ├─ camera.max_x = map.width - camera.width
+    │   ├─ camera.max_y = map.height - camera.height
+    │   └─ If max < 0: set to 0 (map smaller than viewport)
+    │
+    └─ Initialize position at (0, 0)
+
+update_camera(game)  ← Chamado todo frame antes de renderizar
+    │
+    ├─ Calculate target position (center on player):
+    │   ├─ target_x = player_x - (camera_width / 2)
+    │   └─ target_y = player_y - (camera_height / 2)
+    │
+    ├─ Clamp to boundaries:
+    │   ├─ If target_x < 0: target_x = 0
+    │   ├─ If target_y < 0: target_y = 0
+    │   ├─ If target_x > max_x: target_x = max_x
+    │   └─ If target_y > max_y: target_y = max_y
+    │
+    └─ Update camera.x and camera.y
+
+Note: Camera positions are in TILES (grid coordinates), not pixels!
 ```
 
-### Sprite Rendering
+### Sprite Rendering Functions
 ```
-put_sprite(game, sprite, x, y)
-    ├─ Calculate screen position
-    ├─ For each pixel:
-    │   ├─ Get color from sprite
-    │   ├─ If color != TRANSPARENT (0xFF00FF):
-    │   │   └─ Draw pixel to frame buffer
-    │   └─ Skip transparent pixels
-    └─ Continue
+render_tile(game, x, y, sprite)  ← Para tiles opacos (wall, floor)
+    │
+    ├─ Calculate centering offset:
+    │   ├─ offset_x = (tile_size - sprite.width) / 2
+    │   └─ offset_y = (tile_size - sprite.height) / 2
+    │
+    ├─ Convert grid position to screen position:
+    │   ├─ screen_x = (x - camera.x) * tile_size + offset_x
+    │   └─ screen_y = (y - camera.y) * tile_size + offset_y
+    │
+    └─ draw_sprite_to_frame(frame, sprite, screen_x, screen_y)
+        └─ Copy sprite with transparency check
+
+render_roof(game, sprite, x, y)  ← Para tetos (alinhado ao topo)
+    │
+    ├─ Horizontally centered:
+    │   └─ offset_x = (tile_size - sprite.width) / 2
+    │
+    ├─ Vertically aligned to TOP (no offset_y):
+    │   ├─ screen_x = (x - camera.x) * tile_size + offset_x
+    │   └─ screen_y = (y - camera.y) * tile_size + 0
+    │
+    └─ draw_sprite_to_frame(frame, sprite, screen_x, screen_y)
+
+render_sprite_centered(game, sprite, x, y)  ← Para objetos transparentes
+    │
+    ├─ Center both horizontally and vertically:
+    │   ├─ offset_x = (tile_size - sprite.width) / 2
+    │   └─ offset_y = (tile_size - sprite.height) / 2
+    │
+    ├─ Convert to screen position:
+    │   ├─ screen_x = (x - camera.x) * tile_size + offset_x
+    │   └─ screen_y = (y - camera.y) * tile_size + offset_y
+    │
+    └─ draw_sprite_to_frame(frame, sprite, screen_x, screen_y)
+        └─ Skip pixels with color == 0xFF00FF (magenta = transparent)
 ```
 
-### Move Counter Display
+### Low-Level Pixel Operations
 ```
-print_moves(game)
-    ├─ Format: "Moves: XXX"
-    ├─ Position: Top-left corner
-    ├─ Color: White text
-    └─ Updates every frame
+draw_sprite_to_frame(frame, sprite, px, py)  ← Com transparência
+    │
+    └─ For each pixel in sprite:
+        ├─ color = get_pixel_color(sprite, x, y)
+        ├─ If color != TRANSPARENT_COLOR (0xFF00FF):
+        │   └─ put_pixel(frame, px + x, py + y, color)
+        └─ Skip transparent pixels (background shows through)
+
+put_pixel(frame, x, y, color)  ← Escreve pixel no frame buffer
+    │
+    ├─ Boundary check (skip if outside frame)
+    ├─ Calculate address:
+    │   └─ dst = addr + (y * line_len + x * (bpp / 8))
+    └─ Write: *(unsigned int *)dst = color
+
+get_pixel_color(sprite, x, y)  ← Lê cor de um sprite
+    │
+    ├─ Boundary check (return TRANSPARENT_COLOR if outside)
+    ├─ Calculate address:
+    │   └─ src = addr + (y * line_len + x * (bpp / 8))
+    └─ return *(int *)src
+```
+
+### Move Counter Display (HUD)
+```
+render_move_counter(game)  ← Overlay de texto sobre o frame
+    │
+    ├─ Create strings:
+    │   ├─ moves_str = ft_itoa(game->moves)
+    │   └─ counter_text = ft_strjoin("Moves: ", moves_str)
+    │
+    ├─ Draw black outline (shadow effect):
+    │   └─ 3x3 grid (i: -2 to +2, j: -2 to +2):
+    │       └─ mlx_string_put(13 + i, 23 + j, 0x000000)
+    │           └─ Skip center (0, 0) - where main text goes
+    │
+    ├─ Draw main text:
+    │   └─ mlx_string_put(13, 23, 0xFFD700)  ← Gold color
+    │
+    └─ Free memory:
+        ├─ free(moves_str)
+        └─ free(counter_text)
+
+Note: mlx_string_put draws directly on window, NOT on frame buffer!
+This is why it's called AFTER mlx_put_image_to_window.
 ```
 
 ---
