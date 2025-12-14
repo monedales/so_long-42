@@ -319,14 +319,14 @@ handle_keypress(keycode, game)  ← Chamado quando qualquer tecla é pressionada
     │       └─ return (block other inputs)
     │
     └─ [PRIORITY 3] Play Mode (game->scene == 0):
-        └─ handle_movement() → Try to move player
+        └─ Movement keys (WASD/Arrows) → Process movement
 ```
 
 **File:** `src/events.c`
 
 ### Movement Processing
 ```
-handle_movement(keycode, game)  ← Processa movimento do jogador
+handle_keypress(keycode, game)  ← Processa movimento do jogador
     │
     ├─ Step 1: Calculate new position
     │   └─ process_movement(keycode, &new_x, &new_y, game)
