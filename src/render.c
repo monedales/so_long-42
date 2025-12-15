@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/14 13:33:11 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/15 20:43:05 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,56 @@ static void	render_move_counter(t_game *game)
 }
 
 /**
+ * @brief Renders all enemies in the visible camera area.
+ *
+ * Iterates through all enemies and renders them if they are within
+ * the camera viewport. Uses the enemy's direction and animation frame
+ * to select the appropriate sprite (walking or still).
+ * 
+ * @param game Pointer to the game structure.
+ */
+static void	render_enemies(t_game *game)
+{
+	int	i;
+
+	i = 0;
+	while (i < game->enemy_count)
+	{
+		if (game->enemies[i].pos.x >= game->camera.x
+			&& game->enemies[i].pos.x < game->camera.x + game->camera.width
+			&& game->enemies[i].pos.y >= game->camera.y
+			&& game->enemies[i].pos.y < game->camera.y + game->camera.height)
+		{
+			if (game->enemies[i].dir == DIR_RIGHT)
+			{
+				if (game->enemies[i].frame == 0)
+					render_sprite_centered(game, &game->enemies[i].right,
+						game->enemies[i].pos.x, game->enemies[i].pos.y);
+				else if (game->enemies[i].frame == 1)
+					render_sprite_centered(game, &game->enemies[i].walk2_right,
+						game->enemies[i].pos.x, game->enemies[i].pos.y);
+				else
+					render_sprite_centered(game, &game->enemies[i].walk3_right,
+						game->enemies[i].pos.x, game->enemies[i].pos.y);
+			}
+			else
+			{
+				if (game->enemies[i].frame == 0)
+					render_sprite_centered(game, &game->enemies[i].left,
+						game->enemies[i].pos.x, game->enemies[i].pos.y);
+				else if (game->enemies[i].frame == 1)
+					render_sprite_centered(game, &game->enemies[i].walk2_left,
+						game->enemies[i].pos.x, game->enemies[i].pos.y);
+				else
+					render_sprite_centered(game, &game->enemies[i].walk3_left,
+						game->enemies[i].pos.x, game->enemies[i].pos.y);
+			}
+		}
+		i++;
+	}
+}
+
+/**
  * @brief Main rendering function that draws the complete game state.
  *
  * Orchestrates the entire rendering pipeline in the correct order:
@@ -192,6 +242,7 @@ void	render_map(t_game *game)
 		}
 		y++;
 	}
+	render_enemies(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->frame.img, 0, 0);
 	render_move_counter(game);
 }

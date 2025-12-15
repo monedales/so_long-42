@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:30:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/11 18:34:44 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/15 20:43:05 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,48 +41,6 @@ static void	load_single_texture(t_game *game, t_sprite *img, char *path)
 	img->addr = mlx_get_data_addr(img->img, &img->bpp, &img->line_len,
 			&img->endian);
 }
-
-/**
- * @brief Creates a horizontally flipped version of a sprite.
- * 
- * Alternative method for mirroring sprites programmatically.
- * Currently not used - sprites are mirrored using ImageMagick convert:
- * convert sprite.xpm -flop sprite-mirror.xpm
- * 
- * @param game Pointer to the game structure.
- * @param dest Destination sprite to store the flipped image.
- * @param src Source sprite to flip.
- */
-/*
-static void	flip_sprite_horizontal(t_game *game, t_sprite *dest, t_sprite *src)
-{
-	int		x;
-	int		y;
-	int		*src_data;
-	int		*dest_data;
-
-	dest->img = mlx_new_image(game->mlx, src->width, src->height);
-	dest->addr = mlx_get_data_addr(dest->img, &dest->bpp,
-			&dest->line_len, &dest->endian);
-	dest->width = src->width;
-	dest->height = src->height;
-	y = 0;
-	while (y < src->height)
-	{
-		x = 0;
-		while (x < src->width)
-		{
-			src_data = (int *)(src->addr + (y * src->line_len
-						+ x * (src->bpp / 8)));
-			dest_data = (int *)(dest->addr + (y * dest->line_len
-						+ (src->width - 1 - x) * (dest->bpp / 8)));
-			*dest_data = *src_data;
-			x++;
-		}
-		y++;
-	}
-}
-*/
 
 /**
  * @brief Loads idle animation frames for the player.
@@ -179,4 +137,61 @@ void	load_textures(t_game *game)
 		"assets/sprites-louis/louis-walk-right2.xpm");
 	load_single_texture(game, &game->player.collect,
 		"assets/sprites-louis/louis-collect.xpm");
+}
+
+/**
+ * @brief Loads enemy (Ozzy) sprite textures.
+ *
+ * Helper function that loads Ozzy's walking sprites for both directions.
+ * These sprites are used for all enemies in the game.
+ * 
+ * @param game Pointer to the game structure.
+ * @param enemy Pointer to the enemy to load sprites for.
+ */
+static void	load_enemy_sprites(t_game *game, t_enemy *enemy)
+{
+	load_single_texture(game, &enemy->right,
+		"assets/sprites-ozzy/ozzy-walking.xpm");
+	load_single_texture(game, &enemy->left,
+		"assets/sprites-ozzy/ozzy-walking-left.xpm");
+	load_single_texture(game, &enemy->still_right,
+		"assets/sprites-ozzy/ozzy-still.xpm");
+	load_single_texture(game, &enemy->still_left,
+		"assets/sprites-ozzy/ozzy-still-left.xpm");
+	load_single_texture(game, &enemy->walk2_right,
+		"assets/sprites-ozzy/ozzy-walking2.xpm");
+	load_single_texture(game, &enemy->walk2_left,
+		"assets/sprites-ozzy/ozzy-walking2-left.xpm");
+	load_single_texture(game, &enemy->walk3_right,
+		"assets/sprites-ozzy/ozzy-walking3.xpm");
+	load_single_texture(game, &enemy->walk3_left,
+		"assets/sprites-ozzy/ozzy-walking3-left.xpm");
+	enemy->frame = 0;
+	enemy->anim_counter = 0;
+}
+
+/**
+ * @brief Initializes enemy array and loads enemy sprites.
+ *
+ * Allocates memory for the enemy array and loads sprite textures
+ * for each enemy. Enemy positions and initial directions are set
+ * in the parse_enemies() function in ozzy.c.
+ * 
+ * @param game Pointer to the game structure.
+ */
+void	init_enemies(t_game *game)
+{
+	int	i;
+
+	if (game->enemy_count == 0)
+		return ;
+	game->enemies = ft_calloc(game->enemy_count, sizeof(t_enemy));
+	if (!game->enemies)
+		handle_error(ERR_MAP_FAILED);
+	i = 0;
+	while (i < game->enemy_count)
+	{
+		load_enemy_sprites(game, &game->enemies[i]);
+		i++;
+	}
 }

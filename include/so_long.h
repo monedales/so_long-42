@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:56:50 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/12 20:58:31 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/12/15 20:43:05 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # define CHEESE_DELAY 20000
 # define IDLE_FRAMES 5
 # define COLLECT_DURATION 15000
+# define ENEMY_DELAY 10000
+# define ENEMY_ANIM_DELAY 7000
 
 # include "../libs/libft/libft.h"
 # include "../libs/minilibix-linux/mlx.h"
@@ -116,6 +118,22 @@ typedef struct s_camera
 	int			max_y;
 }				t_camera;
 
+typedef struct s_enemy
+{
+	t_point		pos;
+	t_direction	dir;
+	t_sprite	left;
+	t_sprite	right;
+	t_sprite	still_left;
+	t_sprite	still_right;
+	t_sprite	walk2_left;
+	t_sprite	walk2_right;
+	t_sprite	walk3_left;
+	t_sprite	walk3_right;
+	int			frame;
+	int			anim_counter;
+}				t_enemy;
+
 typedef struct s_game
 {
 	void			*mlx;
@@ -130,6 +148,8 @@ typedef struct s_game
 	t_sprite		frame;
 	t_player_anim	player;
 	t_camera		camera;
+	t_enemy			*enemies;
+	int				enemy_count;
 	int				moves;
 	int				tile_size;
 	int				cheese_frame;
@@ -166,6 +186,7 @@ void			parse_map_data(t_game *game);
 void			parse_map_dimensions(t_game *game);
 void			init_window(t_game *game);
 void			load_textures(t_game *game);
+void			init_enemies(t_game *game);
 void			render_map(t_game *game);
 void			put_pixel(t_sprite *frame, int x, int y, int color);
 
@@ -197,6 +218,11 @@ int				handle_close(t_game *game);
 int				close_game(t_game *game);
 int				update_animation(void *param);
 void			update_back_anim(t_game *game, int keycode);
+
+/**** Enemies (Ozzy) ****/
+void			parse_enemies(t_game *game);
+void			update_enemies(t_game *game);
+int				check_enemy_collision(t_game *game);
 
 /**** Cutscenes ****/
 void			handle_scenes(t_game *game);

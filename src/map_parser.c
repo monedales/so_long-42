@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/02 20:32:03 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/15 12:26:19 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ int	is_rectangular(char **map)
  * - 'C': Collectible
  * - 'E': Exit
  * - 'P': Player starting position
+ * - 'M': Enemy mob
  * - 'F': Platform (bonus)
  * - 'G': Ground/floor (bonus)
  * - 'R': Roof/ceiling (bonus)
@@ -155,7 +156,7 @@ int	has_only_valid_chars(char **map)
 			if (c == '\n')
 				break ;
 			if (c != '0' && c != '1' && c != 'C' && c != 'E' && c != 'P'
-				&& c != 'F' && c != 'G' && c != 'R')
+				&& c != 'F' && c != 'G' && c != 'R' && c != 'M')
 				return (0);
 			j++;
 		}

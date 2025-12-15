@@ -6,7 +6,7 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 21:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/12/12 14:08:55 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/15 12:45:32 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ void	parse_map_data(t_game *game)
 	game->map.collectibles = 0;
 	game->map.collected = 0;
 	game->moves = 0;
+	game->enemy_count = 0;
 	game->player.current_dir = DIR_FRONT;
 	game->player.frame = 0;
 	game->player.anim_counter = 0;
@@ -138,6 +139,8 @@ void	parse_map_data(t_game *game)
 		while (x < game->map.width)
 		{
 			parse_tile(game, x, y);
+			if (game->map.grid[y][x] == 'M')
+				game->enemy_count++;
 			x++;
 		}
 		y++;
@@ -172,6 +175,8 @@ void	init_game(t_game *game)
 	init_window(game);
 	init_camera(game);
 	load_textures(game);
+	init_enemies(game);
+	parse_enemies(game);
 	game->scene = 1;
 	game->scene_id = 0;
 	handle_scenes(game);

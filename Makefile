@@ -52,7 +52,7 @@ endif
 SRC := so_long.c map_parser.c map_validator.c map_count.c pathfinding.c \
 	error_handler.c game_init.c texture_loader.c render.c render_tiles.c \
 	render_utils.c events.c events_animation.c free_utils.c free_textures.c \
-	file_utils.c camera.c scenes.c
+	file_utils.c camera.c scenes.c ozzy.c
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
@@ -84,7 +84,7 @@ $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
 
 $(MLX_LIB):
-	@$(MAKE) -C $(MLX_DIR) --silent
+	@$(MAKE) -C $(MLX_DIR) > /dev/null 2>&1
 
 # Bonus target
 # bonus: $(BONUS_NAME)
@@ -133,7 +133,7 @@ test_colors:
 
 clean:
 	@$(MAKE) -C $(LIBFT_DIR) clean --no-print-directory
-	@$(MAKE) -C $(MLX_DIR) clean --silent
+	@$(MAKE) -C $(MLX_DIR) clean > /dev/null 2>&1
 	@$(RM) $(OBJ_DIR) $(OBJ_BONUS_DIR)
 	@echo "$(RED) $(NAME) objects removed$(RESET)"
 

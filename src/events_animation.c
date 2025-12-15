@@ -6,11 +6,13 @@
 /*   By: mona <mona@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:00:00 by mona              #+#    #+#             */
-/*   Updated: 2025/12/12 14:08:55 by mona             ###   ########.fr       */
+/*   Updated: 2025/12/15 20:56:36 by mona             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
+#include <unistd.h>
+#include <stdio.h>
 
 void	update_back_anim(t_game *game, int keycode)
 {
@@ -99,10 +101,37 @@ int	update_animation(void *param)
 {
 	t_game			*game;
 	static int		counter = 0;
+	static int		enemy_counter = 0;
+	int				i;
 
 	game = (t_game *)param;
 	game->player.anim_counter++;
 	update_cheese_anim(game);
 	update_player_anim(game, &counter);
+	i = -1;
+	while (++i < game->enemy_count)
+	{
+		game->enemies[i].anim_counter++;
+		if (game->enemies[i].anim_counter >= ENEMY_ANIM_DELAY)
+		{
+			game->enemies[i].anim_counter = 0;
+			game->enemies[i].frame = (game->enemies[i].frame + 1) % 3;
+		}
+	}
+	enemy_counter++;
+	if (enemy_counter >= ENEMY_DELAY)
+	{
+		enemy_counter = 0;
+		update_enemies(game);
+	}
+	if (check_enemy_collision(game))
+	{
+		ft_printf("\n💀 Game Over! 💀\n");
+		ft_printf("Get better next time you silly human!\n\n");
+		fflush(stdout);
+		usleep(1000000);
+		close_game(game);
+		exit(0);
+	}
 	return (0);
 }
