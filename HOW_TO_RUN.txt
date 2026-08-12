@@ -25,10 +25,10 @@ macOS
 3. Make the game executable (only needed the first time):
    chmod +x so_long
 
-4. Run it:
-   ./so_long maps/test_platform.ber
-
-   Try the other maps in the maps/ folder too!
+4. Run it (pick a difficulty):
+   ./so_long maps_release/easy.ber
+   ./so_long maps_release/medium.ber
+   ./so_long maps_release/hard.ber
 
 
 LINUX
@@ -41,8 +41,10 @@ LINUX
 3. Make the game executable (only needed the first time):
    chmod +x so_long
 
-4. Run it:
-   ./so_long maps/test_platform.ber
+4. Run it (pick a difficulty):
+   ./so_long maps_release/easy.ber
+   ./so_long maps_release/medium.ber
+   ./so_long maps_release/hard.ber
 
 
 TROUBLESHOOTING
