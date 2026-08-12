@@ -1,6 +1,6 @@
 #  SO LONG 👾
 
-> *A 2D top-down adventure game where Louis the cat must collect all treats and escape from his nemesis Ozzy!*
+> *A 2D top-down adventure game where Louis the cat must collect all the cheese and escape from his rival Ozzy!*
 
 [![42 School Project](https://img.shields.io/badge/42-Project-00babc?style=flat-square&logo=42)](https://42.fr)
 [![Norminette](https://img.shields.io/badge/Norminette-passing-success?style=flat-square)](https://github.com/42School/norminette)
@@ -8,55 +8,69 @@
 
 ## Description 📜
 
-**so_long** is a small 2D game built with the **MiniLibX** graphics library. The player controls Louis (a cat 🐱) who must collect all collectibles (`C`) on the map and reach the exit (`E`) while avoiding walls (`1`).
+**so_long** is a 2D game built from scratch with the **MiniLibX** graphics library. The player controls Louis (a cat 🐱) who must collect all the cheese on the map and reach the exit while avoiding walls, platforms, and Ozzy, a rival cat who patrols the map and chases Louis down on sight.
 
-The game validates map format, ensures there's a valid path to all collectibles and the exit, and displays movement count in the terminal.
+Beyond the base 42 requirements, the game features animated sprites (idle, walking, and collecting animations in all four directions), a scrolling camera that follows the player across maps larger than the window, layered map tiles (walls, floors, platforms, and roofs) for verticality, multiple enemies with collision detection, and intro/victory cutscenes.
+
+The game also validates map format on load, ensures there's a valid path to every piece of cheese and the exit before starting, and tracks the player's move count.
 
 ### Project Goals 🎯
-- Learn basic 2D game development
-- Practice event handling (keyboard input)
-- Work with graphics library (MiniLibX)
-- Implement pathfinding algorithms (flood fill)
-- Handle memory management properly
+- Build a complete 2D game loop from scratch in C
+- Practice event handling (keyboard input) and animation timing
+- Work with a low-level graphics library (MiniLibX)
+- Implement pathfinding algorithms (flood fill) for map validation
+- Handle memory management properly (no leaks)
 
 ---
 
-## Technologies & Concepts 🛠️ 
+## Technologies & Concepts 🛠️
 
 - **Language**: C
 - **Graphics**: MiniLibX (X11/XQuartz)
-- **Build System**: Makefile
+- **Build System**: Makefile (macOS and Linux)
 - **Libraries**: Custom `libft`
 - **Algorithms**: Flood Fill (DFS) for path validation
 - **Standards**: 42 Norminette compliant
 
 ---
 
-##  Source Code Structure 📂
+## Source Code Structure 📂
 
 ```
 so_long/
 ├── src/
-│   ├── so_long.c           # Main entry point
-│   ├── map_read.c          # Map file loading
-│   ├── map_validate.c      # Wall validation
-│   ├── map_path.c          # Pathfinding (flood fill)
-│   ├── map_path_utils.c    # Path validation helpers
-│   ├── utils.c             # General utilities
-│   └── error_handler.c     # Error handling
+│   ├── so_long.c            # Main entry point
+│   ├── map_parser.c         # Map file loading
+│   ├── map_validator.c      # Map format validation
+│   ├── map_count.c          # Element counting (P, E, C, M)
+│   ├── pathfinding.c        # Flood fill path validation
+│   ├── game_init.c          # Game state initialization
+│   ├── texture_loader.c     # Sprite/texture loading
+│   ├── render.c             # Main render loop
+│   ├── render_tiles.c       # Tile rendering (walls, floor, roof, platform)
+│   ├── render_utils.c       # Rendering helpers
+│   ├── camera.c             # Scrolling camera logic
+│   ├── events.c             # Keyboard input and movement
+│   ├── events_animation.c   # Player animation state machine
+│   ├── ozzy.c                # Enemy (Ozzy) parsing, patrol, and collision
+│   ├── scenes.c             # Intro/victory cutscenes
+│   ├── free_textures.c      # Texture cleanup
+│   ├── free_utils.c         # General memory cleanup
+│   ├── file_utils.c         # File helpers
+│   └── error_handler.c      # Error handling
 ├── include/
-│   └── so_long.h           # Header file
+│   └── so_long.h            # Header file
 ├── maps/
-│   ├── test.ber            # ✅ Valid map example
-│   ├── bad_chars.ber       # ❌ Invalid characters
-│   ├── bad_shape.ber       # ❌ Not rectangular
-│   ├── no_path.ber         # ❌ No valid path
-│   ├── open_side.ber       # ❌ Open wall (side)
-│   └── open_top.ber        # ❌ Open wall (top)
+│   ├── test.ber              # ✅ Valid map example
+│   ├── bad_chars.ber         # ❌ Invalid characters
+│   ├── bad_shape.ber         # ❌ Not rectangular
+│   ├── no_path.ber           # ❌ No valid path
+│   ├── open_side.ber         # ❌ Open wall (side)
+│   └── open_top.ber          # ❌ Open wall (top)
 ├── libs/
-│   ├── libft/              # Custom C library
-│   └── minilibix-linux/    # MiniLibX for Linux
-├── assets/                 # Game sprites (to be added)
+│   ├── libft/                # Custom C library
+│   └── minilibix-linux/      # MiniLibX
+├── assets/                   # Game sprites and cutscene images
 ├── Makefile
 └── README.md
 ```
@@ -76,10 +90,12 @@ sudo apt-get install gcc make xorg libxext-dev libbsd-dev
 #### macOS
 ```bash
 # XQuartz is required
-brew install XQuartz
+brew install --cask xquartz
 ```
 
-### Building the Project 🔨 
+> **Windows** is not supported natively (MiniLibX depends on X11). Windows users can run the Linux build inside WSL.
+
+### Building the Project 🔨
 
 ```bash
 # Clone the repository
@@ -99,7 +115,7 @@ make fclean
 make re
 ```
 
-### Running the Game ▶️ 
+### Running the Game ▶️
 
 ```bash
 # Run with a valid map
@@ -110,7 +126,7 @@ make re
 ./so_long maps/no_path.ber
 ```
 
-### Controls 🎮 
+### Controls 🎮
 
 | Key | Action |
 |-----|--------|
@@ -128,22 +144,24 @@ make re
 
 1. **File extension**: Must be `.ber`
 2. **Rectangular**: All rows must have the same length
-3. **Characters allowed**:
+3. **Core characters**:
    - `0` - Empty space
    - `1` - Wall
-   - `C` - Collectible
+   - `C` - Cheese (collectible)
    - `E` - Exit
    - `P` - Player starting position
+   - `M` - Enemy (Ozzy) starting position
+   - `F` / `G` / `R` - Platform / floor / roof tiles, used for layered, vertical map design
 4. **Required elements**:
    - Exactly **1** player (`P`)
    - Exactly **1** exit (`E`)
-   - At least **1** collectible (`C`)
+   - At least **1** cheese (`C`)
 5. **Walls**: Map must be surrounded by walls (`1`)
-6. **Valid path**: Player must be able to reach all collectibles and the exit
+6. **Valid path**: Player must be able to reach all cheese and the exit
 
 ### Example Maps
 
-#### Valid Map (`maps/test.ber`) ✅ 
+#### Valid Map (`maps/test.ber`) ✅
 ```
 1111
 1PE1
@@ -151,7 +169,7 @@ make re
 1111
 ```
 
-#### Invalid: No Valid Path (`maps/no_path.ber`) ❌ 
+#### Invalid: No Valid Path (`maps/no_path.ber`) ❌
 ```
 111111
 1P0E01
@@ -159,9 +177,9 @@ make re
 10C001
 111111
 ```
-*The collectible `C` is unreachable.*
+*The cheese `C` is unreachable.*
 
-#### Invalid: Open Wall (`maps/open_top.ber`) ❌ 
+#### Invalid: Open Wall (`maps/open_top.ber`) ❌
 ```
 1011
 1P01
@@ -172,7 +190,7 @@ make re
 
 ---
 
-## Testing 🧪 
+## Testing 🧪
 
 The project includes several test maps in the `maps/` directory:
 
@@ -181,10 +199,9 @@ The project includes several test maps in the `maps/` directory:
 | `test.ber` | Valid small map | ✅ Runs successfully |
 | `bad_chars.ber` | Contains invalid character `Z` | ❌ Error: Invalid characters |
 | `bad_shape.ber` | Not rectangular | ❌ Error: Map not rectangular |
-| `no_path.ber` | Collectible unreachable | ❌ Error: No valid path |
+| `no_path.ber` | Cheese unreachable | ❌ Error: No valid path |
 | `open_side.ber` | Wall not closed (right) | ❌ Error: Walls not closed |
 | `open_top.ber` | Wall not closed (top) | ❌ Error: Walls not closed |
-
 
 ---
 
@@ -212,33 +229,32 @@ Error
 Invalid element count (need 1P, 1E, >=1C)
 
 Error
-No valid path to all collectibles and exit
+No valid path to all cheese and exit
 ```
 
 ---
 
 ## 🎨 Game Features
 
-### Current (Mandatory)
+### Core
 - ✅ Map parsing and validation
 - ✅ Rectangular map check
 - ✅ Wall boundary validation
 - ✅ Element count validation (P, E, C)
 - ✅ Path validation (flood fill algorithm)
 - ✅ Error handling with descriptive messages
-- ⏳ Sprite rendering (in progress)
-- ⏳ Player movement
-- ⏳ Collectible collection
-- ⏳ Exit mechanism
-- ⏳ Movement counter display
+- ✅ Sprite rendering
+- ✅ Player movement (keyboard input, 4 directions)
+- ✅ Animated player sprites (idle, walking, collecting)
+- ✅ Cheese collection
+- ✅ Exit mechanism
+- ✅ Move counter
 
-### Bonus (Planned)
-- ⏳ Enemy patrol (Ozzy the cat 🐱)
-- ⏳ Sprite animation
-- ⏳ On-screen HUD (moves, collectibles)
-- ⏳ Collision detection with enemies
-
-
+### Bonus
+- ✅ Enemy (Ozzy): patrol behavior and collision detection with the player
+- ✅ Scrolling camera for maps larger than the window
+- ✅ Layered map tiles (platform, floor, roof) for vertical map design
+- ✅ Intro and victory cutscenes
 
 ---
 
