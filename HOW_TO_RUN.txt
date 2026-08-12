@@ -1,0 +1,56 @@
+HOW TO RUN — So Long and thanx for all the cheese 🐱🧀
+================================================
+
+GOAL
+----
+Help Louis collect all the cheese and reach the exit, without
+getting caught by Ozzy!
+
+CONTROLS
+--------
+W / A / S / D  or Arrow Keys   Move
+ESC                            Quit
+
+
+macOS
+-----
+1. This game needs XQuartz (X11) to run — it's free:
+   https://www.xquartz.org
+   If you don't have it yet: download, install, then log out
+   and back in (or restart your Mac) so it starts properly.
+
+2. Open Terminal and go to this folder, e.g.:
+   cd ~/Downloads/so_long
+
+3. Make the game executable (only needed the first time):
+   chmod +x so_long
+
+4. Run it:
+   ./so_long maps/test_platform.ber
+
+   Try the other maps in the maps/ folder too!
+
+
+LINUX
+-----
+1. Install the X11 dependencies (Debian/Ubuntu):
+   sudo apt-get install xorg libxext-dev libbsd-dev
+
+2. Open a terminal and go to this folder.
+
+3. Make the game executable (only needed the first time):
+   chmod +x so_long
+
+4. Run it:
+   ./so_long maps/test_platform.ber
+
+
+TROUBLESHOOTING
+---------------
+- "Permission denied" -> run step 3 (chmod +x so_long) again.
+- Window doesn't open on macOS -> make sure XQuartz is actually
+  running (check your menu bar / restart your Mac after installing).
+
+
+Made with 💜 and lots of ☕ at 42 School.
+Full source code: https://github.com/monedales/so_long-42
